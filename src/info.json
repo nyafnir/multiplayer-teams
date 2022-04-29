@@ -1,0 +1,13 @@
+{
+  "name": "MultiplayerTeams",
+  "version": "0.2.4",
+  "title": "Многопользовательские команды",
+  "description": "Мод для игры Factorio, который расширяет возможности совместной игры. Добавляет разделение игроков на независимые команды, систему отношений между ними и торговлю.",
+  "author": "nyafnir & karakov7",
+  "contact": "https://discord.gg/mJV6yjjpHk",
+  "homepage": "https://github.com/nyafnir/multiplayer-teams",
+  "factorio_version": "1.1",
+  "dependencies": [
+    "base >= 1.1"
+  ]
+}
