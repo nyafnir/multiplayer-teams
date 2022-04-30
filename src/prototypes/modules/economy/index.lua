@@ -1,55 +1,57 @@
+--вода беспланая
+--magic number наценка за производство
+local EXTRA_CHARGE = 1
+--ore magic изначальная цена руды
+local ORE_PRICE = 1
+--fluid magic коээфицент для жидкостей
+local FLUID_COEFFICIENT = 0.02
+
 ---при первом запуске проинициализировать цену продукции
-
 function initPrices (player)
-    --for _, p in pairs(game.item_prototypes) do
-    --    player.print(p.name)
-    --    if player.force.recipes[p.name] then
-    --        
-    --    end
-    --end
-
-    local function checkReceipt(name)
-        -- if not player.force.recipes[name] then
-        --save Table [name; price] --жидкость 0,01 прайс -- вода 0
-        --    player.print('with 1 out for: '..name)
-        --    return 1
-        --end
-        if type(name) == 'string' then
-            local receipt = player.force.recipes[name]
-            
-            if receipt == nil then
-                return 1
-            end
-            
-            local price = 0
-
-            for _, ingredient in pairs(receipt.ingredients) do
-                price = price + checkReceipt(game.item_prototypes[ingredient.name].name) * ingredient.amount
-            end      
-
-            local countProducts = 0
-            
-            for _, product in pairs(receipt.products) do
-                countProducts = countProducts + product.amount
-            end
-            
-            local result = math.ceil(price / countProducts + 1)
-            return result
-
-        else
-            player.print("checkReceipt: "..name.name)
+    global.prices = {}
+   
+    local function checkReceipt(name, typeProduct)
+        if global.prices[name] then
+            return global.prices[name]
         end
+        local receipt = player.force.recipes[name]
+        if receipt == nil or typeProduct == 'fluid' then
+            local result = ORE_PRICE
+            if typeProduct == 'item' then
+                global.prices[name] = result
+                 return result
+            end
+            if name == 'water' then 
+                global.prices[name] = 0
+                return 0
+            end
+            global.prices[name] = result * FLUID_COEFFICIENT
+            return result * FLUID_COEFFICIENT
+        end
+            
+        local price = 0
+
+        for _, ingredient in pairs(receipt.ingredients) do
+            price = price + checkReceipt(ingredient.name, ingredient.type) * ingredient.amount
+        end      
+
+        local countProducts = 0
+            
+        for _, product in pairs(receipt.products) do
+            countProducts = countProducts + product.amount
+        end
+        local result = math.ceil(price / countProducts) + EXTRA_CHARGE
+        global.prices[name] = result
+        return result
     end
+
+    price = 0
+     
+    for _, p in pairs(game.item_prototypes) do
+        local result = checkReceipt(p.name, p.type)
+        logger(p.name..': '..result)
+     end
    
-    local price = 0
-   
-    for _, p in pairs(player.force.recipes['lab'].ingredients) do
-        price = price + checkReceipt(p.name) * p.amount
-        --save Table [name; price]
-    end
-    
-    price = price + 1
-    player.print('end. price = '..price)
 end
 
 
