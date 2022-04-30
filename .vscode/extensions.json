@@ -7,7 +7,6 @@
         "oderwat.indent-rainbow",
         "yinfei.luahelper",
         "chakrounanas.turbo-console-log",
-        "vscode-icons-team.vscode-icons",
-        "dmodalek.markdown-preview-github-styles-custom"
+        "vscode-icons-team.vscode-icons"
     ]
 }
