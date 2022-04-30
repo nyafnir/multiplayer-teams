@@ -1,14 +1,13 @@
--- Настройки отображаемые в `Настройки модов`
--- После добавления сюда настройки нужно в `locale/` определить названия `[mod-setting-name]` и описания `[mod-setting-description]`
-
+--- Настройки отображаемые в `Настройки модов`
+--- https://wiki.factorio.com/Tutorial:Mod_settings#Creation
 data:extend({{
-    type = 'int-setting',
-    name = 'multiplayer-teams:spawn-near-distance',
-    setting_type = 'startup', -- вкладка
+    type = 'int-setting', -- тип: bool, int, double, string, каждый тип имеет свои дополнительные поля
+    name = 'multiplayer-teams:spawn-near-distance', -- В `locale/` определяется название `[mod-setting-name]` и описание `[mod-setting-description]`
+    setting_type = 'startup', -- вкладка в окне настроек: startup, runtime-global, runtime-per-user
     default_value = 25,
     minimum_value = 10,
     maximum_value = 100,
-    order = 'c' -- сортировка по этому полю происходит, пример: c < d
+    order = 'c-a', -- по этому полю происходит сортировка в списке настроек, пример: c < d
 }, {
     type = 'int-setting',
     name = 'multiplayer-teams:spawn-far-distance',
@@ -16,7 +15,7 @@ data:extend({{
     default_value = 75,
     minimum_value = 50,
     maximum_value = 500,
-    order = 'd'
+    order = 'c-b'
 }, {
     type = 'int-setting',
     name = 'multiplayer-teams:respawn-timeout',
