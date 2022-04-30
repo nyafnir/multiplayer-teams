@@ -1,21 +1,37 @@
--- В этом файле доступен `script`
-
 --- Если это игровая компания, то не запускать мод
 if script.level.campaign_name then
     return
 end
 
---- [Метод] Доступ к настройкам без префикса (только в этом файле)
-local function config(name)
-    return settings.startup['multiplayer-teams:' .. name].value
+--- [Инициализация модулей]
+
+require('prototypes.modules.utils.index')
+
+if getConfig('economy-enable') then
+    require('prototypes.modules.economy.index')
+
+    if getConfig('quests-enable') then
+        require('prototypes.modules.quests.index')
+    end
 end
+
+if getConfig('teams-enable') then
+    require('prototypes.modules.teams.index')
+
+    if getConfig('relations-enable') then
+        require('prototypes.modules.relations.index')
+    end
+end
+
+require('prototypes.modules.gui.index')
 
 --- [Событие] Мод включён
 script.on_init(function()
+    -- Команда смены расположения
     commands.add_command('mt-respawn', {'command-help.respawn'}, function(command)
         local player = game.players[command.player_index]
 
-        if not player.admin then 
+        if not player.admin then
             game.print({'error-not-admin', game.players[command.player_index].name, command.name})
             return
         end
