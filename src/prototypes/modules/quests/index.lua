@@ -1,0 +1,5 @@
+
+-- createQuest()
+-- completeQuest()
+-- cancelQuest()
+-- failQuest()

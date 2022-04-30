@@ -27,8 +27,26 @@ data:extend({{
     order = 'b'
 }, {
     type = 'bool-setting',
-    name = 'multiplayer-teams:trades-enable',
+    name = 'multiplayer-teams:economy-enable',
     setting_type = 'startup',
     default_value = true,
-    order = 'a'
+    order = 'a-c'
+}, {
+    type = 'bool-setting',
+    name = 'multiplayer-teams:quests-enable',
+    setting_type = 'startup',
+    default_value = true,
+    order = 'a-d'
+}, {
+    type = 'bool-setting',
+    name = 'multiplayer-teams:teams-enable',
+    setting_type = 'startup',
+    default_value = true,
+    order = 'a-a'
+}, {
+    type = 'bool-setting',
+    name = 'multiplayer-teams:relations-enable',
+    setting_type = 'startup',
+    default_value = true,
+    order = 'a-b'
 }})
