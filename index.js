@@ -89,6 +89,12 @@ class FactorioModBuilder {
             updateCount++
         }
 
+        fs.copyFile('LICENSE', `${this.#pathToSrc}/LICENSE`, (err) => {
+            if (!err) {
+                console.log(`[${this.#context}] Лицензия скопирована.`);
+            }
+        });
+
         if (updateCount) {
             fs.writeFileSync(this.#pathToInfo, JSON.stringify(data, null, 2), 'utf8');
             console.info(`[${this.#context}] Информация о моде обновлена (${updateCount}).`);
