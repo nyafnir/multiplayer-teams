@@ -1,0 +1,13 @@
+{
+    "recommendations": [
+        "svizzini.factorio-lua-api-autocomplete",
+        "mikestead.dotenv",
+        "alefragnani.bookmarks",
+        "mhutchie.git-graph",
+        "oderwat.indent-rainbow",
+        "yinfei.luahelper",
+        "chakrounanas.turbo-console-log",
+        "vscode-icons-team.vscode-icons",
+        "dmodalek.markdown-preview-github-styles-custom"
+    ]
+}
