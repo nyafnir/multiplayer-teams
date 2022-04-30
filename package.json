@@ -10,9 +10,10 @@
     "karakov7"
   ],
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "prebuild": "npm ci",
-    "build": "node ."
+    "build": "node --experimental-json-modules ."
   },
   "keywords": [
     "factorio",
@@ -25,6 +26,7 @@
   "dependencies": {
     "adm-zip": "^0.5.9",
     "dotenv": "^16.0.0",
-    "open": "^8.4.0"
+    "open": "^8.4.0",
+    "ps-list": "^8.1.0"
   }
 }

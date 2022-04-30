@@ -1,8 +1,11 @@
-const AdmZip = require("adm-zip");
-const open = require('open');
-const fs = require('fs');
+import AdmZip from "adm-zip";
+import open from 'open';
+import fs from 'fs';
+import psList from 'ps-list';
+import dotenv from 'dotenv'
+import packageJson from './package.json'
 
-require('dotenv').config()
+dotenv.config()
 
 /**
 * @typedef {import('./package.json')} Package 
@@ -18,6 +21,9 @@ class FactorioModBuilder {
 
     #pathToMods = `${this.#appData}\\Factorio\\mods`
     #pathToModList = `${this.#pathToMods}\\mod-list.json`
+
+    #steamLinkToRunFactorio = 'steam://rungameid/427520'
+    #factorioProcessName = 'factorio.exe'
 
     /** @type {Package} */
     #package
@@ -40,12 +46,12 @@ class FactorioModBuilder {
         this.#zipService = options.zipService
     }
 
-    create(enable = true, openFactorio = true) {
+    async create(enable = true, openFactorio = true) {
         this.updateInfo()
         this.remove()
         this.createZipArchive()
         this.changeStatus(enable)
-        openFactorio && this.goToFactorio()
+        openFactorio && await this.restartFactorio()
     }
 
     updateInfo() {
@@ -138,13 +144,21 @@ class FactorioModBuilder {
         }
     }
 
-    goToFactorio() {
-        console.info(`[${this.#context}] Запускаю игру...`);
-        open('steam://rungameid/427520')
+    async restartFactorio() {
+        const list = await psList()
+        const factorio = list.find((p) => p.name === this.#factorioProcessName)
+        if (factorio) {
+            console.info(`[${this.#context}] Перезапускаю игру...`);
+            process.kill(factorio.pid, 'SIGKILL')
+        } else {
+            console.info(`[${this.#context}] Запускаю игру...`);
+        }
+
+        setTimeout(() => open(this.#steamLinkToRunFactorio), parseInt(process.env.REOPEN_WAIT_SECONDS) * 1000)
     }
 }
 
 new FactorioModBuilder({
-    package: require('./package.json'),
+    package: packageJson,
     zipService: new AdmZip()
 }).create(process.env.ENABLE === 'true', process.env.OPEN_GAME === 'true')
