@@ -7,7 +7,7 @@ data:extend({{
     default_value = 25,
     minimum_value = 10,
     maximum_value = 100,
-    order = 'c-a', -- по этому полю происходит сортировка в списке настроек, пример: c < d
+    order = 'c-a' -- по этому полю происходит сортировка в списке настроек, пример: c < d
 }, {
     type = 'int-setting',
     name = 'multiplayer-teams:spawn-far-distance',
@@ -48,4 +48,21 @@ data:extend({{
     setting_type = 'startup',
     default_value = true,
     order = 'a-b'
+}, {
+    type = 'bool-setting',
+    name = 'multiplayer-teams:logger-enable', 
+    setting_type = 'runtime-global',
+    default_value = true,
+    order = 'z-a',
+    forced_value = false, -- Если hidden = true, то будет это значение
+    hidden = false
+}, {
+    type = 'string-setting',
+    name = 'multiplayer-teams:logger-prefix', 
+    setting_type = 'runtime-global',
+    default_value = '[MT-DEBUG] ',
+    order = 'z-b',
+    allow_blank = true,
+    auto_trim = false,
+    hidden = false
 }})
