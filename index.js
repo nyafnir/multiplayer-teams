@@ -151,7 +151,10 @@ class FactorioModBuilder {
             console.info(`[${this.#context}] Запускаю игру...`);
         }
 
-        setTimeout(() => open(this.#steamLinkToRunFactorio), parseInt(process.env.REOPEN_WAIT_SECONDS) * 1000)
+        setTimeout(() =>
+            open(this.#steamLinkToRunFactorio),
+            parseInt(process.env.REOPEN_WAIT_SECONDS) || 3 * 1000
+        )
     }
 }
 
