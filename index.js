@@ -147,4 +147,4 @@ class FactorioModBuilder {
 new FactorioModBuilder({
     package: require('./package.json'),
     zipService: new AdmZip()
-}).create(process.env.ENABLE ?? true, process.env.OPEN_GAME ?? true)
+}).create(process.env.ENABLE === 'true', process.env.OPEN_GAME === 'true')
