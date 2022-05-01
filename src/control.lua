@@ -1,51 +1,39 @@
---- Если это игровая компания, то не запускать мод
-if script.level.campaign_name then
-    return
-end
-
---- [Инициализация модулей]
-
 require('prototypes.modules.utils.index')
 
-if getConfig('economy-enable') then
-    require('prototypes.modules.economy.index')
-
-    if getConfig('quests-enable') then
-        require('prototypes.modules.quests.index')
-    end
-end
-
-if getConfig('teams-enable') then
-    require('prototypes.modules.teams.index')
-
-    if getConfig('relations-enable') then
-        require('prototypes.modules.relations.index')
-    end
-end
-
+require('prototypes.modules.economy.index')
+require('prototypes.modules.quests.index')
+require('prototypes.modules.teams.index')
+require('prototypes.modules.relations.index')
 require('prototypes.modules.gui.index')
 
---- [Событие] Мод включён
+--- [Method] Init in both cases: map initialization and loading/saving
+local function start()
+    --- Если это игровая компания, то не запускать мод
+    if script.level.campaign_name then
+        return false
+    end
+
+    return true
+end
+
+--- [Event] Executed after creating a map with the mod enabled
 script.on_init(function()
-    --- [Команда] Смена расположения
-    commands.add_command('mt-respawn', {'command-help.respawn'}, function(command)
-        logger('Сделан вызов команды `respawn`')
-
-        local player = game.players[command.player_index]
-
-        if not player.admin then
-            return game.print({'error-not-admin', game.players[command.player_index].name, command.name})
-        end
-
-        player.print('Команда ещё не реализована.')
-    end)
+    if not start() then
+        return
+    end
 end)
 
---- [Событие] Игрок подключился
+--- [Event] Executed after loading and saving
+script.on_load(function()
+    -- И помните! "on_load() никогда не должен изменять `global`!"
+
+    if not start() then
+        return
+    end
+end)
+
+--- [Event] Player connected
 script.on_event(defines.events.on_player_joined_game, function(event)
     local player = game.players[event.player_index]
-
     logger('Игрок ' .. player.name .. ' присоединился к игре')
-
-    player.print({'multiplayer-teams.backstory'}, player.color)
 end)
