@@ -47,14 +47,14 @@ class FactorioModBuilder {
     }
 
     async create(enable = true, openFactorio = true) {
-        this.updateInfo()
-        this.remove()
-        this.createZipArchive()
-        this.changeStatus(enable)
-        openFactorio && await this.restartFactorio()
+        this._updateInfo()
+        await this._remove()
+        this._createZipArchive()
+        this._changeStatus(enable)
+        openFactorio && await this._restartFactorio()
     }
 
-    updateInfo() {
+    _updateInfo() {
         const data = JSON.parse(fs.readFileSync(this.#pathToInfo, 'utf8'));
 
         let updateCount = 0
@@ -104,7 +104,7 @@ class FactorioModBuilder {
         }
     }
 
-    createZipArchive() {
+    _createZipArchive() {
         const modName = `${this.#package.name}_${this.#package.version}`
         const fileName = `${modName}.zip`;
 
@@ -114,20 +114,41 @@ class FactorioModBuilder {
         console.info(`[${this.#context}] Мод запакован в "${fileName}" и перемещён в папку игры.`);
     }
 
-    remove() {
+    async _remove() {
         let deletedCount = 0
 
+        const files = await new Promise((resolve, reject) => {
+            fs.readdir(this.#pathToMods, function (error, result) {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+
         const regex = new RegExp(this.#package.name)
-        fs.readdirSync(this.#pathToMods)
-            .filter(fileName => regex.test(fileName))
-            .map(fileName => deletedCount++ && fs.unlinkSync(`${this.#pathToMods}\\${fileName}`))
+        const modFiles = files?.filter(fileName => regex.test(fileName))
+
+        for (const fileName of modFiles) {
+            deletedCount++
+            await new Promise((resolve, reject) => {
+                fs.unlink(`${this.#pathToMods}\\${fileName}`, function (error, result) {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                });
+            });
+        }
 
         if (deletedCount) {
             console.info(`[${this.#context}] Другие версии мода удалены (${deletedCount}).`);
         }
     }
 
-    changeStatus(status = true) {
+    _changeStatus(status = true) {
         /**
          * @type {{ mods: { name: string, enabled: boolean }[] }}
          */
@@ -141,7 +162,7 @@ class FactorioModBuilder {
         }
     }
 
-    async restartFactorio() {
+    async _restartFactorio() {
         const list = await psList()
         const factorio = list.find((p) => p.name === this.#factorioProcessName)
         if (factorio) {
