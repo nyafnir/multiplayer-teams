@@ -1,10 +1,7 @@
 require('prototypes.modules.utils.index')
 
 require('prototypes.modules.economy.index')
-require('prototypes.modules.quests.index')
 require('prototypes.modules.teams.index')
-require('prototypes.modules.relations.index')
-require('prototypes.modules.gui.index')
 
 --- [Method] Init in both cases: map initialization and loading/saving
 local function start()
