@@ -1,7 +1,16 @@
+local this = {
+    model = require('model'),
+    store = require('store'),
+    events = require('events'),
+    commands = require('commands')
+}
 
--- createTeam(name, color)
--- changeTeamName(teamId, newName)
--- changeTeamColor(teamId, newColor)
--- inviteToTeam(teamId, playerId)
--- leaveTeam(teamId, playerId)
--- kickFromTeam(teamId, playerId)
+function this:init()
+    this.store.init()
+end
+
+function this:load()
+    this.store.load()
+end
+
+return this
