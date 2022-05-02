@@ -3,7 +3,7 @@ require('prototypes.modules.utils.index')
 require('prototypes.modules.economy.index')
 require('prototypes.modules.teams.index')
 
---- [Method] Init in both cases: map initialization and loading/saving
+--- [Метод] init в обоих случаях: инициализация карты и загрузка/сохранение
 local function start()
     --- Если это игровая компания, то не запускать мод
     if script.level.campaign_name then
@@ -13,14 +13,14 @@ local function start()
     return true
 end
 
---- [Event] Executed after creating a map with the mod enabled
+--- [Событие] Происходит после создания карты с включенным модом
 script.on_init(function()
     if not start() then
         return
     end
 end)
 
---- [Event] Executed after loading and saving
+--- [Событие] Происходит после загрузки и сохранения
 script.on_load(function()
     -- И помните! "on_load() никогда не должен изменять `global`!"
 
@@ -29,11 +29,9 @@ script.on_load(function()
     end
 end)
 
---- [Event] Player connected
+--- [Событие] Игрок подключился
 script.on_event(defines.events.on_player_joined_game, function(event)
     local player = game.players[event.player_index]
     logger('Игрок ' .. player.name .. ' присоединился к игре')
     initModuleEconomy(player)
-
-    player.print({'multiplayer-teams.backstory'}, player.color)
 end)
