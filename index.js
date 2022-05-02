@@ -47,11 +47,18 @@ class FactorioModBuilder {
     }
 
     async create(enable = true, openFactorio = true) {
-        this._updateInfo()
-        await this._remove()
-        this._createZipArchive()
-        this._changeStatus(enable)
-        openFactorio && await this._restartFactorio()
+        openFactorio && await this._closeFactorio()
+
+        setTimeout(async () => {
+            this._updateInfo()
+            await this._remove()
+            this._createZipArchive()
+            this._changeStatus(enable)
+
+            openFactorio && this._startFactorio()
+        },
+            (parseInt(process.env.REOPEN_WAIT_SECONDS) || 3) * 1000
+        )
     }
 
     _updateInfo() {
@@ -162,20 +169,22 @@ class FactorioModBuilder {
         }
     }
 
-    async _restartFactorio() {
+    async _closeFactorio() {
         const list = await psList()
+
         const factorio = list.find((p) => p.name === this.#factorioProcessName)
         if (factorio) {
-            console.info(`[${this.#context}] Перезапускаю игру...`);
+            console.info(`[${this.#context}] Закрываю игру...`);
             process.kill(factorio.pid, 'SIGKILL')
-        } else {
-            console.info(`[${this.#context}] Запускаю игру...`);
+            return true
         }
 
-        setTimeout(() =>
-            open(this.#steamLinkToRunFactorio),
-            parseInt(process.env.REOPEN_WAIT_SECONDS) || 3 * 1000
-        )
+        return false
+    }
+
+    async _startFactorio() {
+        console.info(`[${this.#context}] Запускаю игру...`);
+        await open(this.#steamLinkToRunFactorio)
     }
 }
 
