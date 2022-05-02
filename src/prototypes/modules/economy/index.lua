@@ -4,39 +4,29 @@ local EXTRA_CHARGE = 1
 --ore magic изначальная цена руды
 local ORE_PRICE = 1
 --fluid magic коээфицент для жидкостей
-local FLUID_COEFFICIENT = 0.02
+local FLUID_COEFFICIENT = 0.3
 --врмея ЗП в минутах
 local TIME_SALARY = 2
 -- 1 секунда = 60 тиков, 1 минута = 60 тиков * 60 секунд
 local ticksToSalary = 60 * 60
 
 ---при первом запуске проинициализировать цену продукции
-local function initPrices (player)
-    global.prices = {}
-   
-    local function checkReceipt(name, typeProduct)
-        if global.prices[name] then
-            return global.prices[name]
+local function initPrices (player)   
+    local function checkReceipt(name)
+        if global.economy.prices[name] then
+            return global.economy.prices[name]
         end
+
         local receipt = player.force.recipes[name]
-        if receipt == nil or typeProduct == 'fluid' then
-            local result = ORE_PRICE
-            if typeProduct == 'item' then
-                global.prices[name] = result
-                 return result
-            end
-            if name == 'water' then 
-                global.prices[name] = 0
-                return 0
-            end
-            global.prices[name] = result * FLUID_COEFFICIENT
-            return result * FLUID_COEFFICIENT
+        if receipt == nil then
+            global.economy.prices[name] = ORE_PRICE
+            return ORE_PRICE
         end
             
         local price = 0
 
         for _, ingredient in pairs(receipt.ingredients) do
-            price = price + checkReceipt(ingredient.name, ingredient.type) * ingredient.amount
+            price = price + checkReceipt(ingredient.name) * ingredient.amount
         end      
 
         local countProducts = 0
@@ -45,67 +35,64 @@ local function initPrices (player)
             countProducts = countProducts + product.amount
         end
         local result = math.ceil(price / countProducts) + EXTRA_CHARGE
-        global.prices[name] = result
+        global.economy.prices[name] = result
         return result
     end
-     
-    for _, item in pairs(game.item_prototypes) do
-        local result = checkReceipt(item.name, item.type)
-        logger(item.name..': '..result)
-     end
-   
+
+    for item, _ in pairs(game.item_prototypes) do
+        local result = checkReceipt(item)
+    end
+
 end
 
 local function setCash(playerName, cash)
-    global[playerName].coins = cash
+    global.economy.balances[playerName].coins = cash
 end
 
 local function addCash(playerName, cash)
-    global[playerName].coins = global[playerName].coins + cash
+    global.economy.balances[playerName].coins = global.economy.balances[playerName].coins + cash
 end
 
 local function popCash(playerName, cash)
-    global[playerName].coins = global[playerName].coins - cash
+    if cash > global.economy.balances[playerName].coins then
+        return false
+    end
+    global.economy.balances[playerName].coins = global.economy.balances[playerName].coins - cash
+    return true
 end
 
 local function accamulateSalary(player)
     local sum = 0
-    for _, item in pairs(game.item_prototypes) do
-        local ic, oc, icf, ocf = 0, 0, 0, 0
-        
-        if item.type == 'item' then
-            ic = player.force.item_production_statistics.get_flow_count({name = item.name, input = true, precision_index = defines.flow_precision_index.one_minute, count = true})
-            local fic = player.force.item_production_statistics.get_flow_count({name = item.name, input = true, precision_index = defines.flow_precision_index.one_minute, count = false})
-            if ic > 0 or fic > 0 then
-                player.print(item.name..': ic: '..ic..'. fic: '..fic)
-            end
-            oc = player.force.item_production_statistics.get_flow_count({name = item.name, input = false, precision_index = defines.flow_precision_index.one_minute, count = true})
-        end
-        if item.type == 'fluid' then
-            icf = player.force.fluid_production_statistics.get_flow_count({name = item.name, input = true, precision_index = defines.flow_precision_index.one_minute, count = true})
-            ocf = player.force.fluid_production_statistics.get_flow_count({name = item.name, input = false, precision_index = defines.flow_precision_index.one_minute, count = true})
-        end
-
+    for item, _ in pairs(game.fluid_prototypes ) do
+        local icf, ocf = 0, 0
+        icf = player.force.fluid_production_statistics.get_flow_count({name = item, input = true, precision_index = defines.flow_precision_index.one_minute, count = true})
+        ocf = player.force.fluid_production_statistics.get_flow_count({name = item, input = false, precision_index = defines.flow_precision_index.one_minute, count = true})
+        player.print(item..' добыто: '..icf..' потрачено: '..ocf)
+     
         if icf > 0 then
-            if not item.name == 'water' then
-                sum = sum + icf / 100
+            if not item == 'water' then
+                sum = sum + icf * FLUID_COEFFICIENT
             end
         end
 
         if ocf > 0 then
-            if not item.name == 'water' then
-                sum = sum - ocf / 100
+            if not item == 'water' then
+                sum = sum - ocf * FLUID_COEFFICIENT
             end
         end
-
+    end
+    for item, _ in pairs(game.item_prototypes) do
+        local ic, oc = 0, 0
+        ic = player.force.item_production_statistics.get_flow_count({name = item, input = true, precision_index = defines.flow_precision_index.one_minute, count = true})
+        local fic = player.force.item_production_statistics.get_flow_count({name = item, input = true, precision_index = defines.flow_precision_index.one_minute, count = false})
+        oc = player.force.item_production_statistics.get_flow_count({name = item, input = false, precision_index = defines.flow_precision_index.one_minute, count = true})
         if ic > 0 then
-            player.print(item.name..' ic : '..ic..' * '..global.prices[item.name])
-            sum = sum + ic * global.prices[item.name]
+            player.print(item..' ic : '..ic..' * '..global.economy.prices[item])
+            sum = sum + ic * global.economy.prices[item]
         end
         if oc > 0 then
-            player.print(item.name..' oc : '..oc..' * '..global.prices[item.name])
-            sum = sum - oc * global.prices[item.name]
-
+            player.print(item..' oc : '..oc..' * '..global.economy.prices[item])
+            sum = sum - oc * global.economy.prices[item]
         end
      end
      return sum
@@ -121,12 +108,11 @@ local function salary(player)
             sum = sum + accamulateSalary(player)
             player.print('есть вхождение')
             if iteration == TIME_SALARY then
-                player.print('зп')
                 if sum > 0 then
                     addCash(player.name, sum)
-                    player.print('Начисление зп в размере '..sum..' всего на счету: '..global[player.name].coins)
+                    player.print('Начисление зп в размере '..sum..' всего на счету: '..global.economy.balances[player.name].coins)
                 else
-                    player.print('Корпарация вами не довольна. В этот раз вы потратили ресурсов больше чем добыли, поэтому деньги не будут начислены.\nВсего на счету: '..global[player.name].coins)
+                    player.print('Корпарация вами не довольна. В этот раз вы потратили ресурсов больше чем добыли, поэтому деньги не будут начислены.\nВсего на счету: '..global.economy.balances[player.name].coins)
                 end
                 iteration, sum = 0, 0
             end
@@ -148,7 +134,9 @@ end
 -- popItemsFromMarket()
 
 function initModuleEconomy(player)
+    global.economy = { balances = {}, prices = {}}
     initPrices(player)
-    global[player.name] = {coins = 0}
+    -- global.balances[player.force.index] = {coins = 0}
+    global.economy.balances[player.name] = {coins = 0}
     salary(player)
 end
