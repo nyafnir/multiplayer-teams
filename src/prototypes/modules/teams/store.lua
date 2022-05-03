@@ -21,7 +21,6 @@ function this.getDefault()
 end
 
 function this.init()
-    logger('Команды загружены? ' .. tostring(global.teams == nil))
     if global.teams == nil then
         global.teams = {}
 
@@ -30,7 +29,6 @@ function this.init()
         team.name = 'Без команды'
         this.insert(team)
     end
-    logger('Количество команд:' .. tostring(#global.teams))
 end
 
 function this.load()
