@@ -5,10 +5,7 @@
   "description": "Мод для игры Factorio, который расширяет возможности совместной игры. Добавляет разделение игроков на независимые команды, систему отношений между ними и торговлю.",
   "homepage": "https://github.com/nyafnir/multiplayer-teams",
   "contact": "https://discord.gg/mJV6yjjpHk",
-  "author": "nyafnir",
-  "contributors": [
-    "karakov7"
-  ],
+  "author": "LightLevel",
   "main": "index.js",
   "type": "module",
   "scripts": {
