@@ -6,7 +6,7 @@ local this = {
 }
 
 function this.start()
-    if not getConfig('teams:enable') == 'true' then
+    if getConfig('teams:enable') ~= true then
         return
     end
 

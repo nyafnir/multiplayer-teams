@@ -1,6 +1,6 @@
 --- [Метод] Вывести сообщение в чат (вывод отключается через настройки)
 function logger(text)
-    if not getConfig('logger:enable') == 'true' then
+    if getConfig('logger:enable') ~= true then
         return
     end
 
