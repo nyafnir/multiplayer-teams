@@ -171,8 +171,9 @@ function this.inviteSend(command)
         return owner.print({'teams:errors.already-have-invite'}, color.yellow)
     end
 
-    local team = teams.store.invites.set(owner.force, player)
+     teams.store.invites.set(owner.force, player)
     local timeout = getConfig('teams:invite-timeout')
+    local team = teams.store.getByName(owner.force.name)
     owner.print({'teams:result.invite-send', player.name, timeout}, team.color)
     player.print({'teams:events.invite-getted', team.title, timeout}, team.color)
 end
