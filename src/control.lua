@@ -1,7 +1,7 @@
 require('prototypes.modules.utils.index')
 
 require('prototypes.modules.economy.index')
-require('prototypes.modules.teams.index')
+teams = require('prototypes.modules.teams.index')
 
 --- [Метод] init в обоих случаях: инициализация карты и загрузка/сохранение
 local function start()
@@ -9,6 +9,8 @@ local function start()
     if script.level.campaign_name then
         return false
     end
+
+    teams.start()
 
     return true
 end
@@ -31,7 +33,8 @@ end)
 
 --- [Событие] Игрок подключился
 script.on_event(defines.events.on_player_joined_game, function(event)
-    local player = game.players[event.player_index]
+    local player = getPlayerById(event.player_index)
     logger('Игрок ' .. player.name .. ' присоединился к игре')
+
     initModuleEconomy(player)
 end)

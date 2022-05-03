@@ -1,6 +1,7 @@
 local prefix = 'multiplayer-teams:'
 
 --- [Метод] Получение значения настройки (`name` без префикса)
+--- Всегда возвращает строку
 function getConfig(name)
     -- if player ~= nil then
     --     local runtime_per_user = player.mod_settings[prefix .. name]
