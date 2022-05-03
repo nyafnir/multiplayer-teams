@@ -240,8 +240,9 @@ function this.kick(command)
         return owner.print({'teams:errors.can-t-kick-owner'}, color.red)
     end
 
-    local team = teams.model.kick(player)
-    game.print({'teams:result.kick', player.name, team.title}, team.color)
+    local oldTeam = teams.store.getByName(owner.force.name)
+    teams.model.kick(player)
+    game.print({'teams:result.kick', player.name, oldTeam.title}, oldTeam.color)
 end
 
 function this.change(command)
