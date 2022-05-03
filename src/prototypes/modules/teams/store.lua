@@ -4,17 +4,19 @@ local this = {
     }
 }
 
-script.on_nth_tick(60 * 60 * tonumber(getConfig('teams:invite-timeout')), function(event)
+local timeout = 60 * 60 * tonumber(getConfig('teams:invite-timeout')) -- ticks
+
+script.on_nth_tick(timeout, function(event)
     if event == nil then
         return
     end
-    
-    if #teams.store.invites.data == 0 then
+
+    if not next(teams.store.invites.data) then
         return
     end
 
-    for _, data in pairs(teams.store.invites.data) do
-        if data.date <= os.date() then
+    for playerId, data in pairs(teams.store.invites.data) do
+        if data.createdAt + timeout <= getPlayerById(playerId).online_time then
             data = nil
         end
     end
@@ -107,7 +109,7 @@ end
 function this.invites.set(force, player)
     this.invites.data[player.index] = {
         forceName = force.name,
-        date = os.date()
+        createdAt = player.online_time -- ticks
     }
 end
 
