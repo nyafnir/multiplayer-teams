@@ -26,7 +26,7 @@ function this:getInfo(team)
         ownerName = 'нет'
     end
 
-    return {'teams:result.info', team.id, team.title, ownerName, #player.force.players}
+    return {'teams:result.info', team.id, team.title, ownerName, getSize(player.force.players)}
 end
 
 function this:create(name, owner)

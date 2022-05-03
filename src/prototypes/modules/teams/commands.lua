@@ -16,9 +16,9 @@ end
 function this:create(command)
     local owner = game.players[command.player_index]
     local title = command.parameter
-
+    logger(getSize(game.forces))
     --- Проверка, что есть место для создания команды
-    if #game.forces >= 61 then -- 61 - это постоянное значение ограничения
+    if getSize(game.forces) >= 61 then -- 61 - это постоянное значение ограничения
         return owner.print({'teams:errors.reach-force-limit'}, color.red)
     end
 
@@ -193,7 +193,7 @@ function this:change(command)
     end
 
     --- Проверка, что это не последний игрок команды
-    if #params.player.force.players == 1 then
+    if getSize(params.player.force.players) == 1 then
         teams.model.remove(params.player.force)
     end
 
