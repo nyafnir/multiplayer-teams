@@ -29,7 +29,14 @@ function this.remove(name)
     local default = teams.store.getDefaultForce()
 
     if name ~= default.name then
+        --- Убраем всех игроков из команды
+        local force = this.getForce(force.name)
+        for _, player in pairs(force.players) do
+            teams.model.changeTeamForPlayer(player, default)
+        end
+        --- Удаляем из force
         game.merge_forces(name, default.name)
+        --- Удаляем из teams
         this.getAll()[name] = nil
     end
 
