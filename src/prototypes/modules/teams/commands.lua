@@ -166,13 +166,15 @@ function this.inviteSend(command)
         return player.print({'teams:errors.player-already-in-team'}, color.red)
     end
 
+    local timeout = getConfig('teams:invite-timeout')
+
     --- Проверка, что приглашения у игрока на рассмотрении нет
     if teams.store.invites.get(player) ~= nil then
-        return owner.print({'teams:errors.already-have-invite'}, color.yellow)
+        return owner.print({'teams:errors.already-have-invite', timeout}, color.yellow)
     end
 
-     teams.store.invites.set(owner.force, player)
-    local timeout = getConfig('teams:invite-timeout')
+    teams.store.invites.set(owner.force, player)
+
     local team = teams.store.getByName(owner.force.name)
     owner.print({'teams:result.invite-send', player.name, timeout}, team.color)
     player.print({'teams:events.invite-getted', team.title, timeout}, team.color)
