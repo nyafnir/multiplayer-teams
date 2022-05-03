@@ -198,7 +198,7 @@ function this.inviteAccept(command)
     end
 
     local team = teams.model.changeTeamForPlayer(player, force)
-    game.print({'teams:result.invite-accepted', player.name, team.title}, team.color)
+    game.print({'teams:events.invite-accepted', player.name, team.title}, team.color)
 end
 
 function this.inviteCancel(command)
@@ -213,7 +213,7 @@ function this.inviteCancel(command)
     teams.store.invites.remove(player)
 
     local team = teams.store.getByName(invite.forceName)
-    game.print({'teams:result.invite-canceled', player.name, team.title}, team.color)
+    game.print({'teams:events.invite-canceled', player.name, team.title}, team.color)
 end
 
 function this.kick(command)
