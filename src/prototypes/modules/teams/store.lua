@@ -4,6 +4,22 @@ local this = {
     }
 }
 
+script.on_nth_tick(60 * 60 * tonumber(getConfig('teams:invite-timeout')), function(event)
+    if event == nil then
+        return
+    end
+    
+    if #teams.store.invites.data == 0 then
+        return
+    end
+
+    for _, data in pairs(teams.store.invites.data) do
+        if data.date <= os.date() then
+            data = nil
+        end
+    end
+end)
+
 function this.insert(team)
     this.getAll()[team.name] = team
     return team

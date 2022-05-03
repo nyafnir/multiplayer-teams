@@ -99,22 +99,22 @@ end
 
 local function salary(player)
     local iteration, sum = 0, 0
-    script.on_nth_tick(
-        ticksToSalary, 
-        function(event)
-            iteration = iteration + 1
-            game.print(event.tick)
-            sum = sum + accamulateSalary(player)
-            if iteration == TIME_SALARY then
-                if sum > 0 then
-                    addCash(player.name, sum)
-                    player.print('Начисление зп в размере '..sum..' всего на счету: '..global.economy.balances[player.name].coins)
-                else
-                    player.print('Корпарация вами не довольна. В этот раз вы потратили ресурсов больше чем добыли, поэтому деньги не будут начислены.\nВсего на счету: '..global.economy.balances[player.name].coins)
-                end
-                iteration, sum = 0, 0
-            end
-        end)
+    -- script.on_nth_tick(
+    --     ticksToSalary, 
+    --     function(event)
+    --         iteration = iteration + 1
+    --         game.print(event.tick)
+    --         sum = sum + accamulateSalary(player)
+    --         if iteration == TIME_SALARY then
+    --             if sum > 0 then
+    --                 addCash(player.name, sum)
+    --                 player.print('Начисление зп в размере '..sum..' всего на счету: '..global.economy.balances[player.name].coins)
+    --             else
+    --                 player.print('Корпарация вами не довольна. В этот раз вы потратили ресурсов больше чем добыли, поэтому деньги не будут начислены.\nВсего на счету: '..global.economy.balances[player.name].coins)
+    --             end
+    --             iteration, sum = 0, 0
+    --         end
+    --     end)
     
 end
 
