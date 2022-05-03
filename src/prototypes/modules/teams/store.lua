@@ -36,7 +36,7 @@ function this.remove(name)
 
     if name ~= default.name then
         --- Убраем всех игроков из команды
-        local force = this.getForce(force.name)
+        local force = this.getForce(name)
         for _, player in pairs(force.players) do
             teams.model.changeTeamForPlayer(player, default)
         end
