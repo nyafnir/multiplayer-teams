@@ -13,7 +13,7 @@ data:extend({{
 --- [Logger] "Карта"
 data:extend({{
     type = 'bool-setting',
-    name = 'multiplayer-teams:logger:enable', 
+    name = 'multiplayer-teams:logger:enable',
     setting_type = 'runtime-global',
     default_value = true,
     order = 'z-a',
@@ -21,7 +21,7 @@ data:extend({{
     hidden = false
 }, {
     type = 'string-setting',
-    name = 'multiplayer-teams:logger:prefix', 
+    name = 'multiplayer-teams:logger:prefix',
     setting_type = 'runtime-global',
     default_value = '[MT-DEBUG] ',
     order = 'z-b',

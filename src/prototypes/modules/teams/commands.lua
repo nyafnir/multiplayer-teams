@@ -1,19 +1,19 @@
 local this = {}
 
-function this:info(command)
+function this.info(command)
     local player = game.players[command.player_index]
     local team = teams.store.getByName(player.force.name)
     player.print(teams.model.getInfo(team), team.color)
 end
 
-function this:list(command)
+function this.list(command)
     local player = game.players[command.player_index]
     for team in teams.store.getAll() do
         player.print(teams.model.getInfo(team), team.color)
     end
 end
 
-function this:create(command)
+function this.create(command)
     local owner = game.players[command.player_index]
     local title = command.parameter
 
@@ -37,7 +37,7 @@ function this:create(command)
     owner.print({'mod.backstory'}, team.color)
 end
 
-function this:name(command)
+function this.name(command)
     local owner = game.players[command.player_index]
 
     --- Проверка, что это владелец команды
@@ -62,7 +62,7 @@ function this:name(command)
     return game.print({'teams:result.edit-name', oldTitle, team.title}, team.color)
 end
 
-function this:color(command)
+function this.color(command)
     local owner = game.players[command.player_index]
 
     --- Проверка, что это владелец команды
@@ -81,7 +81,7 @@ function this:color(command)
     return game.print({'teams:result.edit-color', team.title, tostring(oldColor), tostring(team.color)}, team.color)
 end
 
-function this:inviteSend(command)
+function this.inviteSend(command)
     local owner = game.players[command.player_index]
 
     --- Проверка, что это владелец команды
@@ -111,7 +111,7 @@ function this:inviteSend(command)
     player.print({'teams:events.invite-getted', team.title, timeout}, team.color)
 end
 
-function this:inviteAccept(command)
+function this.inviteAccept(command)
     local player = game.players[command.player_index]
 
     --- Проверка, что у нас есть приглашение для одобрения
@@ -132,7 +132,7 @@ function this:inviteAccept(command)
     game.print({'teams:result.invite-accepted', player.name, team.title}, team.color)
 end
 
-function this:inviteCancel(command)
+function this.inviteCancel(command)
     local player = game.players[command.player_index]
 
     --- Проверка, что у нас есть приглашение для отклонения
@@ -147,7 +147,7 @@ function this:inviteCancel(command)
     game.print({'teams:result.invite-canceled', player.name, team.title}, team.color)
 end
 
-function this:kick(command)
+function this.kick(command)
     local owner = game.players[command.player_index]
 
     --- Проверка, что это владелец команды
@@ -170,7 +170,7 @@ function this:kick(command)
     game.print({'teams:result.kick', player.name, team.name}, team.color)
 end
 
-function this:change(command)
+function this.change(command)
     local player = game.players[command.player_index]
 
     --- Проверка, что это администратор
@@ -202,7 +202,7 @@ function this:change(command)
     return game.print({'teams:result.change', params.player.name, oldForceName, team.title}, team.color)
 end
 
-function this:remove(command)
+function this.remove(command)
     local owner = game.players[command.player_index]
 
     --- Проверка, что это владелец команды

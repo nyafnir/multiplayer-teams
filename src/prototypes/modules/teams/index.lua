@@ -5,7 +5,7 @@ local this = {
     commands = require('commands')
 }
 
-function this:init()
+function this.init()
     if getConfig('teams:enable') then
         this.store.init()
 
@@ -25,7 +25,7 @@ function this:init()
     end
 end
 
-function this:load()
+function this.load()
     this.store.load()
 end
 

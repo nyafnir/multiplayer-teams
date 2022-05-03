@@ -4,7 +4,11 @@ local this = {
     }
 }
 
-script.on_nth_tick(60 * 60 * getConfig('teams:invite-timeout'), function(event)
+script.on_nth_tick(60 * 60 * tonumber(getConfig('teams:invite-timeout')), function(event)
+    if #this.invites.data == 0 then
+        return
+    end
+
     for playerId, data in this.invites.data do
         if data.date <= os.date() then
             data = nil
@@ -12,11 +16,12 @@ script.on_nth_tick(60 * 60 * getConfig('teams:invite-timeout'), function(event)
     end
 end)
 
-function this:getDefault()
+function this.getDefault()
     return game.forces[getConfig('teams:defaultForceName')]
 end
 
-function this:init()
+function this.init()
+    logger('Команды загружены? ' .. tostring(global.teams == nil))
     if global.teams == nil then
         global.teams = {}
 
@@ -25,9 +30,10 @@ function this:init()
         team.name = 'Без команды'
         this.insert(team)
     end
+    logger('Количество команд:' .. tostring(#global.teams))
 end
 
-function this:load()
+function this.load()
     --- Если модуль не был инициализирован в начале игры, то он возьмёт данные по командам из игры
     for force in game.forces do
         -- команды нет в нашем модуле?
@@ -39,20 +45,20 @@ function this:load()
     end
 end
 
-function this:insert(team)
-    global.teams.insert(team.name, team)
+function this.insert(team)
+    global.teams[team.name] = team
     return team
 end
 
-function this:add(force, owner)
+function this.add(force, owner)
     return this.insert(teams.model.new(force, owner))
 end
 
-function this:getByName(teamName)
+function this.getByName(teamName)
     return global.teams[teamName]
 end
 
-function this:getById(teamId)
+function this.getById(teamId)
     for team in global.teams do
         if team.id == teamId then
             return team
@@ -62,7 +68,7 @@ function this:getById(teamId)
     return nil
 end
 
-function this:getByTitle(title)
+function this.getByTitle(title)
     for team in global.teams do
         if team.title == title then
             return team
@@ -72,7 +78,7 @@ function this:getByTitle(title)
     return nil
 end
 
-function this:getAll()
+function this.getAll()
     return global.teams or {}
 end
 
