@@ -10,14 +10,14 @@ script.on_nth_tick(timeout, function(event)
     if event == nil then
         return
     end
-
+    
     if not next(teams.store.invites.data) then
         return
     end
 
     for playerId, data in pairs(teams.store.invites.data) do
         if data.createdAt + timeout <= getPlayerById(playerId).online_time then
-            data = nil
+            teams.store.invites.data[playerId] = nil  
         end
     end
 end)
