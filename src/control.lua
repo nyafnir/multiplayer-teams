@@ -1,7 +1,7 @@
 require('prototypes.modules.utils.index')
 
 require('prototypes.modules.economy.index')
-require('prototypes.modules.teams.index')
+teams = require('prototypes.modules.teams.index')
 
 --- [Метод] init в обоих случаях: инициализация карты и загрузка/сохранение
 local function start()
@@ -18,6 +18,8 @@ script.on_init(function()
     if not start() then
         return
     end
+
+    teams.init()
 end)
 
 --- [Событие] Происходит после загрузки и сохранения
