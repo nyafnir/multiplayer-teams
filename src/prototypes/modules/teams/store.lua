@@ -20,25 +20,30 @@ function this.getDefault()
     return game.forces[getConfig('teams:defaultForceName')]
 end
 
-function this.init()
-    if global.teams == nil then
-        global.teams = {}
+--- Добавляем команду по умолчанию
+local function addDefaultTeam()
+    local team = teams.model.new(this.getDefault(), nil)
+    team.name = 'Без команды'
+    this.insert(team)
+end
 
-        --- Добавляем команду по умолчанию
-        local team = teams.model.new(this.getDefault(), nil)
-        team.name = 'Без команды'
-        this.insert(team)
-    end
+function this.init()
+    global.teams = {}
+    addDefaultTeam()
 end
 
 function this.load()
-    --- Если модуль не был инициализирован в начале игры, то он возьмёт данные по командам из игры
-    for force in game.forces do
-        -- команды нет в нашем модуле?
-        if this.getByName(force.name) ~= nil then
-            -- тогда добавляем
-            local owner = force.players[0] or force.players[1]
-            this.add(force, owner)
+    if global.teams == nil then
+        this.init()
+        --- Если модуль не был инициализирован в начале игры, то он возьмёт данные по командам из игры
+        for forceName, force in pairs(game.forces) do
+            -- команды нет в нашем модуле?
+            if forceName ~= 'player' and forceName ~= 'enemy' and forceName ~= 'neutral' and this.getByName(forceName) ~=
+                nil then
+                -- тогда добавляем
+                local owner = force.players[0] or force.players[1]
+                this.add(force, owner)
+            end
         end
     end
 end
