@@ -10,6 +10,8 @@ local function start()
         return false
     end
 
+    teams.start()
+
     return true
 end
 
@@ -18,8 +20,6 @@ script.on_init(function()
     if not start() then
         return
     end
-
-    teams.init()
 end)
 
 --- [Событие] Происходит после загрузки и сохранения
@@ -33,7 +33,7 @@ end)
 
 --- [Событие] Игрок подключился
 script.on_event(defines.events.on_player_joined_game, function(event)
-    local player = game.players[event.player_index]
+    local player = getPlayerById(event.player_index)
     logger('Игрок ' .. player.name .. ' присоединился к игре')
 
     initModuleEconomy(player)

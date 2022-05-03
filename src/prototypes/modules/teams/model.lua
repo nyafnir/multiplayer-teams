@@ -21,12 +21,18 @@ end
 
 -- @return {string}
 function this.getInfo(team)
-    local ownerName = getPlayerById(team.ownerId)
-    if ownerName == nil then
-        ownerName = 'нет'
+    local owner = getPlayerById(team.ownerId)
+
+    local ownerName = 'нет'
+    local countPlayers = 0
+    if owner ~= nil then
+        ownerName = owner.name
+        countPlayers = #owner.force.players
+    else
+        countPlayers = #teams.store.getForce(team.name).players
     end
 
-    return {'teams:result.info', team.id, team.title, ownerName, #player.force.players}
+    return {'teams:result.info', team.id, team.title, ownerName, countPlayers}
 end
 
 function this.create(name, owner)
@@ -71,7 +77,12 @@ function this.changeTeamForPlayer(player, force)
 end
 
 function this.kick(player)
-    local default = teams.store.getDefault()
+    local default = teams.store.getDefaultForce()
+    return this.changeTeamForPlayer(player, default)
+end
+
+function this.leave(player)
+    local default = teams.store.getDefaultForce()
     return this.changeTeamForPlayer(player, default)
 end
 
@@ -79,13 +90,7 @@ end
 -- @param {LuaForce} force
 -- @return {Team} Вернёт объект команды по умолчанию ("Без команды")
 function this.remove(force)
-    local default = teams.store.getDefault()
-
-    if force ~= default then
-        game.merge_forces(force.name, default.name)
-    end
-
-    return teams.store.getByName(default.name)
+    return teams.store.remove(force.name)
 end
 
 return this

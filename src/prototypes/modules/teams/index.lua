@@ -5,12 +5,13 @@ local this = {
     commands = require('commands')
 }
 
-function this.init()
-    if getConfig('teams:enable') then
-        this.store.init()
+function this.start()
+    if not getConfig('teams:enable') == 'true' then
+        return
+    end
 
-        script.on_event(defines.events.on_player_created, teams.events.onJoinNewPlayer)
-
+    -- Если консольной команды "информации о команде" нет, значит и другого нет, тогда загружаем их
+    if commands.commands['team'] == nil then
         commands.add_command('team', {'teams:help.info'}, teams.commands.info)
         commands.add_command('teams', {'teams:help.list'}, teams.commands.list)
         commands.add_command('team-create', {'teams:help.create'}, teams.commands.create)
@@ -22,11 +23,10 @@ function this.init()
         commands.add_command('team-kick', {'teams:help.kick'}, teams.commands.kick)
         commands.add_command('team-change', {'teams:help.change'}, teams.commands.change)
         commands.add_command('team-remove', {'teams:help.remove'}, teams.commands.remove)
-    end
-end
+        commands.add_command('team-leave', {'teams:help.leave'}, teams.commands.leave)
 
-function this.load()
-    this.store.load()
+        script.on_event(defines.events.on_player_created, teams.events.onJoinNewPlayer)
+    end
 end
 
 return this

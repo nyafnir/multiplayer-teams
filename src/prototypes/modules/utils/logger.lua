@@ -1,11 +1,23 @@
 --- [Метод] Вывести сообщение в чат (вывод отключается через настройки)
 function logger(text)
-    if getConfig('logger:enable') == true then
-        if text == nil then
-            text = 'nil'
-        end
-
-        game.print(getConfig('logger:prefix') .. text) -- игровой чат
-        print(getConfig('logger:prefix') .. text) -- TODO: куда записывается этот лог?
+    if not getConfig('logger:enable') == 'true' then
+        return
     end
+
+    if text == nil then
+        text = 'nil'
+    end
+
+    local record = getConfig('logger:prefix') .. serpent.block(text)
+
+    if game ~= nil then
+        game.print(record) -- chat
+    end
+    print(record) -- console
+    log(record) -- factorio-current.log
+
+end
+
+function tableToString(table)
+    return serpent.block(table)
 end

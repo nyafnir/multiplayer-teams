@@ -1,5 +1,5 @@
 function giveItemToPlayer(playerId, itemName, amount)
-    local player = game.players[playerId]
+    local player = getPlayerById(playerId)
     player.insert({
         name = itemName,
         count = amount
@@ -11,7 +11,7 @@ function getPlayerByName(name)
         return nil
     end
 
-    for player in global.players[name] do
+    for _, player in pairs(game.players) do
         if player.name == name then
             return player
         end
@@ -31,6 +31,6 @@ function getPlayerById(id)
     --     end
     -- end
 
-    return global.players[id]
+    return game.players[id]
 end
 
