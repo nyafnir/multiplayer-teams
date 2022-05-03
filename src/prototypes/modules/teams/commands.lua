@@ -2,7 +2,9 @@ local this = {}
 
 function this.info(command)
     local player = game.players[command.player_index]
+    logger('Инфо о команде: ' .. player.force.name)
     local team = teams.store.getByName(player.force.name)
+    logger('Получена команда: ' .. team.name)
     player.print(teams.model.getInfo(team), team.color)
 end
 
