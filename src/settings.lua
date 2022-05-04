@@ -7,7 +7,7 @@ data:extend({{
     name = 'multiplayer-teams:economy:enable',
     setting_type = 'startup',
     default_value = true,
-    order = 'a-c'
+    order = 'b-economy-a'
 }})
 
 --- [Logger] "Карта"
@@ -36,7 +36,7 @@ data:extend({{
     name = 'multiplayer-teams:teams:enable',
     setting_type = 'startup',
     default_value = true,
-    order = 'a-teams-a'
+    order = 'b-teams-a'
 }, {
     type = 'string-setting',
     name = 'multiplayer-teams:teams:defaultForceName',
@@ -55,7 +55,7 @@ data:extend({{
     default_value = 'Команда ',
     allow_blank = true,
     auto_trim = true,
-    order = 'a-teams-b'
+    order = 'b-teams-b'
 }, {
     type = 'int-setting',
     name = 'multiplayer-teams:teams:invite-timeout',
@@ -63,5 +63,16 @@ data:extend({{
     default_value = 1,
     minimum_value = 1,
     maximum_value = 60,
-    order = 'a-teams-c'
+    order = 'b-teams-c'
+}})
+
+--- [GUI] "Карта"
+data:extend({{
+    type = 'bool-setting',
+    name = 'multiplayer-teams:gui:enable',
+    setting_type = 'runtime-global',
+    default_value = true,
+    order = 'a-gui-a',
+    forced_value = false, -- Если hidden = true, то будет это значение
+    hidden = false
 }})
