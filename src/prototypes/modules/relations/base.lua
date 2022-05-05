@@ -11,15 +11,15 @@ function this.list(forceFrom)
         local team = teams.store.getByName(nameTo)
 
         if forceFrom.is_friend(forceTo) then
-            list.friends = friends .. team.title .. ' '
+            list.friends = list.friends .. team.title .. ' '
         else
             if forceFrom.is_enemy(forceTo) then
-                list.enemies = enemies .. team.title .. ' '
+                list.enemies = list.enemies .. team.title .. ' '
             else
                 if nameTo == teams.store.getDefaultForce().name then
                     goto relations_commands_list_continue
                 end
-                list.neutrals = neutrals .. team.title .. ' '
+                list.neutrals = list.neutrals .. team.title .. ' '
             end
         end
 
