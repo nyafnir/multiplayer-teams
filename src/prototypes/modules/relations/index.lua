@@ -8,6 +8,8 @@ function this.start()
         return
     end
 
+    relations.base.checkFriendlyFires()
+
     -- Если первой консольной команды нет, значит и других нет, тогда загружаем их
     if commands.commands['relations'] == nil then
         commands.add_command('relations', {'relations:help.list'}, relations.commands.list)

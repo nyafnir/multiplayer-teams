@@ -51,8 +51,27 @@ function this.friend(forceFrom, forceTo)
     if not forceFrom.get_friend(forceTo) then
         forceFrom.set_friend(forceTo, true)
     end
-    if not forceFrom.get_cease_fire(forceTo) then
+    if getConfig('relations:friendly-fire:enable') == true and not forceFrom.get_cease_fire(forceTo) then
         forceFrom.set_cease_fire(forceTo, true)
+    end
+end
+
+function this.checkFriendlyFires()
+    if getConfig('relations:friendly-fire:enable') == true then
+        return
+    end
+
+    --- Удаляем из списков запрета стрельбы
+    local defaultName = teams.store.getDefaultForce().name
+    for nameFrom, forceFrom in pairs(teams.store.getForces()) do
+        if nameFrom ~= defaultName then
+            for nameTo, forceTo in pairs(teams.store.getForces()) do
+                if nameTo ~= defaultName then
+                    forceFrom.set_cease_fire(forceTo, false)
+                end
+            end
+        end
+
     end
 end
 
