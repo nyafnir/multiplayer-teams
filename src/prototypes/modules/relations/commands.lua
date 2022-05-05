@@ -5,8 +5,8 @@ function this.list(command)
 
     local list = relations.base.list(player.force)
 
-    player.print({'relations:result.info-friend', list.friends}, color.green)
-    player.print({'relations:result.info-enemy', list.enemies}, color.red)
+    player.print({'relations:result.info-friends', list.friends}, color.green)
+    player.print({'relations:result.info-enemies', list.enemies}, color.red)
     player.print({'relations:result.info-neutrals', list.neutrals}, color.grey)
 end
 
