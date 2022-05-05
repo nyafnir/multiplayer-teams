@@ -118,6 +118,10 @@ function this.invites.remove(player)
 end
 
 function this.getForce(name)
+    -- if name == nil then
+    --     return nil
+    -- end
+
     return this.getForces()[name]
 end
 

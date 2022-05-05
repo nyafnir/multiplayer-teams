@@ -66,6 +66,15 @@ data:extend({{
     order = 'b-teams-c'
 }})
 
+--- [Relations] "До старта"
+data:extend({{
+    type = 'bool-setting',
+    name = 'multiplayer-teams:relations:enable',
+    setting_type = 'startup',
+    default_value = true,
+    order = 'c-relations-a'
+}})
+
 --- [GUI] "Карта"
 data:extend({{
     type = 'bool-setting',

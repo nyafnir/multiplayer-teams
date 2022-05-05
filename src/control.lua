@@ -1,6 +1,7 @@
 require('prototypes.modules.utils.index')
 require('prototypes.modules.economy.index')
 teams = require('prototypes.modules.teams.index')
+relations = require('prototypes.modules.relations.index') -- Строго после `teams`
 local gui = require('prototypes.gui.index')
 
 --- [Метод] init в обоих случаях: инициализация карты и загрузка/сохранение
@@ -11,6 +12,7 @@ local function start()
     end
 
     teams.start()
+    relations.start()
     gui.start()
 
     return true
