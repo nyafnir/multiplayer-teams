@@ -1,6 +1,6 @@
 local this = {
-    base = require('base'),
-    commands = require('commands')
+    base = require('prototypes.modules.relations.base'),
+    commands = require('prototypes.modules.relations.commands')
 }
 
 function this.start()
