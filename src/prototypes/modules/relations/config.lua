@@ -1,4 +1,4 @@
-local this = {
+return {
     enable = getConfig('relations:enable'),
     offer = {
         timeout = {
@@ -7,15 +7,3 @@ local this = {
         }
     }
 }
-
-script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
-    if event.setting == getConfigFullName('relations:enable') then
-        if this.enable then
-            relations.commands.addCmds()
-        else
-            relations.commands.removeCmds()
-        end
-    end
-end)
-
-return this
