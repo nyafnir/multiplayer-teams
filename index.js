@@ -61,6 +61,25 @@ class FactorioModBuilder {
         )
     }
 
+    _updateLicense() {
+        const outsidePath = 'LICENSE'
+        const insidePath = `${this.#pathToSrc}/LICENSE`
+
+        if (!fs.existsSync(outsidePath) || !fs.existsSync(insidePath)) {
+            return false
+        }
+
+        const outsideBuffer = fs.readFileSync(outsidePath)
+        const insideBuffer = fs.readFileSync(insidePath)
+
+        if (outsideBuffer.compare(insideBuffer) !== 0) {
+            fs.copyFileSync(outsidePath, insidePath);
+            return true
+        }
+
+        return false
+    }
+
     _updateInfo() {
         const data = JSON.parse(fs.readFileSync(this.#pathToInfo, 'utf8'));
 
@@ -102,8 +121,8 @@ class FactorioModBuilder {
             updateCount++
         }
 
-        fs.copyFileSync('LICENSE', `${this.#pathToSrc}/LICENSE`);
-        console.info(`[${this.#context}] Лицензия скопирована без проверки на различие.`);
+        const haveUpdateLicense = this._updateLicense()
+        haveUpdateLicense && updateCount++
 
         if (updateCount) {
             fs.writeFileSync(this.#pathToInfo, JSON.stringify(data, null, 2), 'utf8');
