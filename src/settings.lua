@@ -1,3 +1,5 @@
+require('prototypes.modules.relations.settings')
+
 --- Настройки отображаемые в `Настройки модов`
 --- https://wiki.factorio.com/Tutorial:Mod_settings#Creation
 
@@ -64,23 +66,6 @@ data:extend({{
     minimum_value = 1,
     maximum_value = 60,
     order = 'b-teams-c'
-}})
-
---- [Relations] "До старта"
-data:extend({{
-    type = 'bool-setting',
-    name = 'multiplayer-teams:relations:enable',
-    setting_type = 'startup',
-    default_value = true,
-    order = 'c-relations-a'
-}, {
-    type = 'int-setting',
-    name = 'multiplayer-teams:relations:offer-timeout',
-    setting_type = 'startup',
-    default_value = 1,
-    minimum_value = 1,
-    maximum_value = 60,
-    order = 'с-relations-b'
 }})
 
 --- [GUI] "Карта"
