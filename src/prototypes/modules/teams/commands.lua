@@ -138,7 +138,7 @@ function this.color(command)
 
     --- Проверка, что цвет не тот же самый
     local oldColor = teams.store.getByName(owner.force.name).color
-    if isEqualColors(owner.color, oldColor) then
+    if isEqualRGBAColors(owner.color, oldColor) then
         return owner.print({'teams:errors.color-already-use'}, colors.red)
     end
 
