@@ -70,23 +70,17 @@ data:extend({{
 data:extend({{
     type = 'bool-setting',
     name = 'multiplayer-teams:relations:enable',
-    setting_type = 'startup',
+    setting_type = 'runtime-global',
     default_value = true,
     order = 'c-relations-a'
 }, {
-    type = 'bool-setting',
-    name = 'multiplayer-teams:relations:friendly-fire:enable',
-    setting_type = 'startup',
-    default_value = true,
-    order = 'с-relations-b'
-}, {
     type = 'int-setting',
     name = 'multiplayer-teams:relations:offer-timeout',
-    setting_type = 'startup',
+    setting_type = 'runtime-global',
     default_value = 1,
     minimum_value = 1,
     maximum_value = 60,
-    order = 'с-relations-c'
+    order = 'с-relations-b'
 }})
 
 --- [GUI] "Карта"

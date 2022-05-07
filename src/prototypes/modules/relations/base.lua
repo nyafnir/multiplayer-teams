@@ -38,26 +38,17 @@ function this.setEnemy(forceFrom, forceTo)
     if forceFrom.get_friend(forceTo) then
         forceFrom.set_friend(forceTo, false)
     end
-    if forceFrom.get_cease_fire(forceTo) then
-        forceFrom.set_cease_fire(forceTo, false)
-    end
 end
 
 function this.setNeutral(forceFrom, forceTo)
     if forceFrom.get_friend(forceTo) then
         forceFrom.set_friend(forceTo, false)
     end
-    if not forceFrom.get_cease_fire(forceTo) then
-        forceFrom.set_cease_fire(forceTo, true)
-    end
 end
 
 function this.setFriend(forceFrom, forceTo)
     if not forceFrom.get_friend(forceTo) then
         forceFrom.set_friend(forceTo, true)
-    end
-    if relations.config.hasFriendlyFire and not forceFrom.get_cease_fire(forceTo) then
-        forceFrom.set_cease_fire(forceTo, true)
     end
 end
 
