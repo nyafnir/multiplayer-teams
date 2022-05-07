@@ -124,15 +124,6 @@ function this.addCmds()
     end
 end
 
-function this.removeCmds()
-    commands.remove_command('relations')
-    commands.remove_command('relation-enemy')
-    commands.remove_command('relation-neutral')
-    commands.remove_command('relation-friend')
-    commands.remove_command('relation-accept')
-    commands.remove_command('relation-cancel')
-end
-
 function this.getList(command)
     local owner = getPlayerById(command.player_index)
     local list = relations.base.getList(owner.force)
