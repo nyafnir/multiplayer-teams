@@ -46,10 +46,10 @@ local function changeRelation(ownerFromId, teamToTitle, relation)
             return ownerFrom.print({'relations:error.already-has-the-relation'}, color.red)
         end
 
-        relations.store.offers.set(teamFrom.name, teamTo.name, teamTo.ownerId)
+        relations.store.offers.set(teamFrom.name, teamTo.name, teamTo.ownerId, 'friend')
 
         ownerFrom.print({'relations:event.offer-friend-sended', teamTo.title}, teamTo.color)
-        ownerTo.print({'relations:event.offer-friend-getted', teamTo.title}, teamTo.color)
+        ownerTo.print({'relations:event.offer-friend-getted', teamFrom.title}, teamTo.color)
 
         return
     end
@@ -64,9 +64,10 @@ local function changeRelation(ownerFromId, teamToTitle, relation)
             relations.base.setNeutral(forceFrom, forceTo)
             game.print({'relations:event.become-neutral', teamFrom.title, teamTo.title}, color.grey)
         else
-            relations.store.offers.set(teamFrom.name, teamTo.name, teamTo.ownerId)
+            relations.store.offers.set(teamFrom.name, teamTo.name, teamTo.ownerId, 'neutral')
+
             ownerFrom.print({'relations:event.offer-neutral-sended', teamTo.title}, teamTo.color)
-            ownerTo.print({'relations:event.offer-neutral-getted', teamTo.title}, teamTo.color)
+            ownerTo.print({'relations:event.offer-neutral-getted', teamFrom.title}, teamTo.color)
         end
 
         return
@@ -80,6 +81,7 @@ local function changeOffer(ownerToId, isAccept)
     if offer == nil then --- Проверка, что есть заявка
         return ownerTo.print({'relations:error.not-offer'}, color.yellow)
     end
+
     relations.store.offers.remove(ownerTo.index)
 
     local forceFrom = teams.store.getForce(offer.forceFromName)

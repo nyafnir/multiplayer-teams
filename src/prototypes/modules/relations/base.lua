@@ -2,32 +2,36 @@ local this = {}
 
 function this.getList(forceFrom)
     local list = {
-        friends = '',
-        enemies = '',
-        neutrals = ''
+        friends = {},
+        enemies = {},
+        neutrals = {}
     }
 
     for nameTo, team in pairs(teams.store.getAll()) do
         local forceTo = teams.store.getForce(nameTo)
 
-        if nameTo == teams.store.getDefaultForce().name and nameTo == forceFrom then
+        if nameTo == teams.store.getDefaultForce().name or nameTo == forceFrom then
             goto relations_base_list_continue
         end
 
         if forceFrom.is_friend(forceTo) then
-            list.friends = list.friends .. team.title .. ' '
+            table.insert(list.friends, team.title)
         else
             if forceFrom.is_enemy(forceTo) then
-                list.enemies = list.enemies .. team.title .. ' '
+                table.insert(list.enemies, team.title)
             else
-                list.neutrals = list.neutrals .. team.title .. ' '
+                table.insert(list.neutrals, team.title)
             end
         end
 
         ::relations_base_list_continue::
     end
 
-    return list
+    return {
+        friends = table.concat(list.friends,', '),
+        enemies = table.concat(list.enemies,', '),
+        neutrals = table.concat(list.neutrals,', '),
+    }
 end
 
 function this.setEnemy(forceFrom, forceTo)

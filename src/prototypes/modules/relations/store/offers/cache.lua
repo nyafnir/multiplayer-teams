@@ -10,11 +10,12 @@ function this.get(ownerToId)
     return this._vault[ownerToId]
 end
 
-function this.set(forceFromName, forceToName, ownerToId)
+function this.set(forceFromName, forceToName, ownerToId, relation)
 
     local obj = {
-        forceFromName,
-        forceToName,
+        forceFromName = forceFromName,
+        forceToName = forceToName,
+        relation = relation, --- = 'friend' | 'neutral'
         expiredAt = game.ticks_played + relations.config.offer.timeout.ticks
     }
 
