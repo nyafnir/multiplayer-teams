@@ -48,8 +48,8 @@ local function changeRelation(ownerFromId, teamToTitle, relation)
 
         relations.store.offers.set(teamFrom.name, teamTo.name, teamTo.ownerId)
 
-        ownerFrom.print({'relations:result.offer-friend-sended', teamTo.title}, teamTo.color)
-        ownerTo.print({'relations:result.offer-friend-getted', teamTo.title}, teamTo.color)
+        ownerFrom.print({'relations:event.offer-friend-sended', teamTo.title}, teamTo.color)
+        ownerTo.print({'relations:event.offer-friend-getted', teamTo.title}, teamTo.color)
 
         return
     end
@@ -65,8 +65,8 @@ local function changeRelation(ownerFromId, teamToTitle, relation)
             game.print({'relations:event.become-neutral', teamFrom.title, teamTo.title}, color.grey)
         else
             relations.store.offers.set(teamFrom.name, teamTo.name, teamTo.ownerId)
-            ownerFrom.print({'relations:result.offer-neutral-sended', teamTo.title}, teamTo.color)
-            ownerTo.print({'relations:result.offer-neutral-getted', teamTo.title}, teamTo.color)
+            ownerFrom.print({'relations:event.offer-neutral-sended', teamTo.title}, teamTo.color)
+            ownerTo.print({'relations:event.offer-neutral-getted', teamTo.title}, teamTo.color)
         end
 
         return
@@ -105,7 +105,7 @@ local function changeOffer(ownerToId, isAccept)
             relations.base.setFriend(forceFrom, forceTo)
             game.print({'relations:event.offer-friend-accepted', teamFrom.title, teamTo.title}, color.green)
         else
-            ownerFrom.print({'relations:offer-friend-canceled', teamTo.title}, color.red)
+            ownerFrom.print({'relations:event.offer-friend-canceled', teamTo.title}, color.red)
         end
     end
 end
