@@ -90,7 +90,7 @@ function this.create(command)
 
     --- Проверка, что название указано
     if title == nil then
-        title = getConfig('teams:prefix') .. owner.name
+        title = owner.name
     end
 
     --- Проверка, что название команды не занято и имя для force свободно

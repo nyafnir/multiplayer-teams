@@ -8,7 +8,7 @@ function logger(text)
         text = 'nil'
     end
 
-    local record = getConfig('logger:prefix') .. serpent.block(text)
+    local record = getConfig('logger:prefix') .. ' ' .. serpent.block(text)
 
     if game ~= nil then
         game.print(record) -- chat

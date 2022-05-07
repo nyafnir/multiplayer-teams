@@ -3,5 +3,5 @@ data:extend({{
     name = 'multiplayer-teams:economy:enable',
     setting_type = 'startup',
     default_value = true,
-    order = 'b-economy-a'
+    order = 'e-economy-a'
 }})

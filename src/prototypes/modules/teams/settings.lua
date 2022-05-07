@@ -5,21 +5,13 @@ data:extend({{
     default_value = true,
     order = 'b-teams-a'
 }, {
-    type = 'string-setting',
-    name = 'multiplayer-teams:teams:prefix',
-    setting_type = 'runtime-global',
-    default_value = 'Команда ',
-    allow_blank = true,
-    auto_trim = true,
-    order = 'b-teams-b'
-}, {
     type = 'int-setting',
     name = 'multiplayer-teams:teams:invite-timeout',
-    setting_type = 'runtime-global',
+    setting_type = 'startup',
     default_value = 1,
     minimum_value = 1,
     maximum_value = 60,
-    order = 'b-teams-c'
+    order = 'b-teams-t'
 }})
 
 data:extend({{
@@ -27,8 +19,9 @@ data:extend({{
     name = 'multiplayer-teams:teams:defaultForceName',
     setting_type = 'startup',
     --- здесь используются команды создаваемые по умолчанию в игре
-    default_value = 'player', -- player | enemy | neutral 
+    default_value = 'player', -- player | enemy | neutral
+    order = 'b-teams-z',
     allow_blank = false,
-    auto_trim = false,
+    auto_trim = true,
     hidden = true
 }})
