@@ -1,6 +1,7 @@
 local this = {
+    config = require('prototypes.modules.teams.config'),
+    store = require('prototypes.modules.teams.store.index'),
     model = require('prototypes.modules.teams.model'),
-    store = require('prototypes.modules.teams.store'),
     events = require('prototypes.modules.teams.events'),
     commands = require('prototypes.modules.teams.commands')
 }

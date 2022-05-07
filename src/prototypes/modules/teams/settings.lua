@@ -13,15 +13,3 @@ data:extend({{
     maximum_value = 60,
     order = 'b-teams-t'
 }})
-
-data:extend({{
-    type = 'string-setting',
-    name = 'multiplayer-teams:teams:defaultForceName',
-    setting_type = 'startup',
-    --- здесь используются команды создаваемые по умолчанию в игре
-    default_value = 'player', -- player | enemy | neutral
-    order = 'b-teams-z',
-    allow_blank = false,
-    auto_trim = true,
-    hidden = true
-}})
