@@ -1,16 +1,17 @@
 local this = {}
 
-function this.list(forceFrom)
+function this.getList(forceFrom)
     local list = {
         friends = '',
         enemies = '',
         neutrals = ''
     }
 
-    for nameTo, forceTo in pairs(teams.store.getForces()) do
-        local team = teams.store.getByName(nameTo)
-        if team == nil or nameTo == teams.store.getDefaultForce().name then
-            goto relations_commands_list_continue
+    for nameTo, team in pairs(teams.store.getAll()) do
+        local forceTo = teams.store.getForce(nameTo)
+
+        if nameTo == teams.store.getDefaultForce().name then
+            goto relations_base_list_continue
         end
 
         if forceFrom.is_friend(forceTo) then
@@ -23,13 +24,13 @@ function this.list(forceFrom)
             end
         end
 
-        ::relations_commands_list_continue::
+        ::relations_base_list_continue::
     end
 
     return list
 end
 
-function this.enemy(forceFrom, forceTo)
+function this.setEnemy(forceFrom, forceTo)
     if forceFrom.get_friend(forceTo) then
         forceFrom.set_friend(forceTo, false)
     end
@@ -38,7 +39,7 @@ function this.enemy(forceFrom, forceTo)
     end
 end
 
-function this.neutral(forceFrom, forceTo)
+function this.setNeutral(forceFrom, forceTo)
     if forceFrom.get_friend(forceTo) then
         forceFrom.set_friend(forceTo, false)
     end
@@ -47,32 +48,25 @@ function this.neutral(forceFrom, forceTo)
     end
 end
 
-function this.friend(forceFrom, forceTo)
+function this.setFriend(forceFrom, forceTo)
     if not forceFrom.get_friend(forceTo) then
         forceFrom.set_friend(forceTo, true)
     end
-    if getConfig('relations:friendly-fire:enable') == true and not forceFrom.get_cease_fire(forceTo) then
+    if relations.config.hasFriendlyFire and not forceFrom.get_cease_fire(forceTo) then
         forceFrom.set_cease_fire(forceTo, true)
     end
 end
 
-function this.checkFriendlyFires()
-    if getConfig('relations:friendly-fire:enable') == true then
-        return
-    end
+function this.setOffer(forceFromName, forceToName, ownerToId)
+    relations.store.offers.set(forceFromName, forceToName, ownerToId)
+end
 
-    --- Удаляем из списков запрета стрельбы
-    local defaultName = teams.store.getDefaultForce().name
-    for nameFrom, forceFrom in pairs(teams.store.getForces()) do
-        if nameFrom ~= defaultName then
-            for nameTo, forceTo in pairs(teams.store.getForces()) do
-                if nameTo ~= defaultName then
-                    forceFrom.set_cease_fire(forceTo, false)
-                end
-            end
-        end
+function this.getOffer(ownerToId)
+    relations.store.offers.get(ownerToId)
+end
 
-    end
+function this.removeOffer(ownerToId)
+    relations.store.offers.remove(ownerToId)
 end
 
 return this
