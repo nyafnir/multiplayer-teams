@@ -57,7 +57,7 @@ class FactorioModBuilder {
 
             openFactorio && this._startFactorio()
         },
-            (parseInt(process.env.REOPEN_WAIT_SECONDS) || 3) * 1000
+            openFactorio ? (parseInt(process.env.REOPEN_WAIT_SECONDS) || 3) * 1000 : 0
         )
     }
 
