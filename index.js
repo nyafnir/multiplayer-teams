@@ -46,14 +46,14 @@ class FactorioModBuilder {
         this.#zipService = options.zipService
     }
 
-    async create(enable = true, openFactorio = true) {
+    async create(modStatus = true, openFactorio = true) {
         openFactorio && await this._closeFactorio()
 
         setTimeout(async () => {
             this._updateInfo()
             await this._remove()
             this._createZipArchive()
-            this._changeStatus(enable)
+            this._changeStatus(modStatus)
 
             openFactorio && this._startFactorio()
         },
@@ -191,4 +191,4 @@ class FactorioModBuilder {
 new FactorioModBuilder({
     package: packageJson,
     zipService: new AdmZip()
-}).create(process.env.ENABLE === 'true', process.env.OPEN_GAME === 'true')
+}).create(process.env.ACTIVATE_MOD === 'true', process.env.OPEN_GAME === 'true')
