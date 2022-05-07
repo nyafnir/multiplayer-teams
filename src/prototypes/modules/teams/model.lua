@@ -7,7 +7,7 @@ function this.new(force, owner)
         id = force.index,
         name = force.name, --- оригинальное имя, никогда не меняется
         title = force.name, --- отображаемое имя, можно менять
-        color = color.white,
+        color = colors.white,
         ownerId = nil
     }
 

@@ -4,5 +4,5 @@ local guiStyle = data.raw["gui-style"].default
 guiStyle['main_button'] = {
     type = 'button_style',
     size = 55, --- Sets both width and height to the given value. 
-    color = color.grey,
+    color = colors.grey,
 }

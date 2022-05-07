@@ -5,21 +5,21 @@ local function changeRelation(ownerFromId, teamToTitle, relation)
     local ownerFrom = getPlayerById(ownerFromId)
 
     if teamToTitle == nil then --- Проверка, что указано название команды игроков
-        return ownerFrom.print({'relations:error.not-team-title'}, color.red)
+        return ownerFrom.print({'relations:error.not-team-title'}, colors.red)
     end
 
     local teamTo = teams.store.getByName(teamToTitle)
     --- Проверка, что команда игроков существует
     --- Проверка, что это не "Без команды"
     if teamTo == nil or teams.model.isDefaultTeam(teamTo.name) then
-        return ownerFrom.print({'relations:error.not-found-team'}, color.red)
+        return ownerFrom.print({'relations:error.not-found-team'}, colors.red)
     end
     local forceTo = teams.store.getForce(teamTo.name)
 
     local forceFrom = ownerFrom.force
     local teamFrom = teams.store.getByName(forceFrom.name)
     if teamFrom.ownerId ~= ownerFromId then --- Проверка, что это лидер своей команды
-        return ownerFrom.print({'relations:error.not-owner'}, color.red)
+        return ownerFrom.print({'relations:error.not-owner'}, colors.red)
     end
 
     local ownerTo = getPlayerById(teamTo.ownerId)
@@ -28,22 +28,22 @@ local function changeRelation(ownerFromId, teamToTitle, relation)
     local offer = relations.store.offers.get(ownerTo.index)
     if offer ~= nil then --- Проверка, что есть заявка
         return ownerFrom.print({'relations:error.already-has-offer', relations.config.offer.timeout.minutes},
-            color.yellow)
+            colors.yellow)
     end
 
     if relation == 'enemy' then --- заявка никогда не нужна
         if forceFrom.is_enemy(forceTo) then --- Проверка, что предложенных отношений ещё нет
-            return ownerFrom.print({'relations:error.already-has-the-relation'}, color.red)
+            return ownerFrom.print({'relations:error.already-has-the-relation'}, colors.red)
         end
 
         relations.base.setEnemy(forceFrom, forceTo)
 
-        return game.print({'relations:event.become-enemies', teamFrom.title, teamTo.title}, color.red)
+        return game.print({'relations:event.become-enemies', teamFrom.title, teamTo.title}, colors.red)
     end
 
     if relation == 'friend' then --- заявка всегда нужна
         if forceFrom.is_friend(forceTo) then --- Проверка, что предложенных отношений ещё нет
-            return ownerFrom.print({'relations:error.already-has-the-relation'}, color.red)
+            return ownerFrom.print({'relations:error.already-has-the-relation'}, colors.red)
         end
 
         relations.store.offers.set(teamFrom.name, teamTo.name, teamTo.ownerId, 'friend')
@@ -57,12 +57,12 @@ local function changeRelation(ownerFromId, teamToTitle, relation)
     if relation == 'neutral' then
         --- Проверка, что предложенных отношений ещё нет
         if not forceFrom.is_enemy(forceTo) and not forceFrom.is_friend(forceTo) then
-            return ownerFrom.print({'relations:error.already-has-the-relation'}, color.red)
+            return ownerFrom.print({'relations:error.already-has-the-relation'}, colors.red)
         end
 
         if forceFrom.is_friend(forceTo) then --- заявка не нужна, если друзья
             relations.base.setNeutral(forceFrom, forceTo)
-            game.print({'relations:event.become-neutral', teamFrom.title, teamTo.title}, color.grey)
+            game.print({'relations:event.become-neutral', teamFrom.title, teamTo.title}, colors.grey)
         else
             relations.store.offers.set(teamFrom.name, teamTo.name, teamTo.ownerId, 'neutral')
 
@@ -79,7 +79,7 @@ local function changeOffer(ownerToId, isAccept)
 
     local offer = relations.store.offers.get(ownerTo.index)
     if offer == nil then --- Проверка, что есть заявка
-        return ownerTo.print({'relations:error.not-offer'}, color.yellow)
+        return ownerTo.print({'relations:error.not-offer'}, colors.yellow)
     end
 
     relations.store.offers.remove(ownerTo.index)
@@ -95,9 +95,9 @@ local function changeOffer(ownerToId, isAccept)
     if offer.relation == 'neutral' then
         if isAccept then
             relations.base.setNeutral(forceFrom, forceTo)
-            game.print({'relations:event.offer-neutral-accepted', teamFrom.title, teamTo.title}, color.grey)
+            game.print({'relations:event.offer-neutral-accepted', teamFrom.title, teamTo.title}, colors.grey)
         else
-            ownerFrom.print({'relations:event.offer-neutral-canceled', teamTo.title}, color.red)
+            ownerFrom.print({'relations:event.offer-neutral-canceled', teamTo.title}, colors.red)
         end
         return
     end
@@ -105,9 +105,9 @@ local function changeOffer(ownerToId, isAccept)
     if offer.relation == 'friend' then
         if isAccept then
             relations.base.setFriend(forceFrom, forceTo)
-            game.print({'relations:event.offer-friend-accepted', teamFrom.title, teamTo.title}, color.green)
+            game.print({'relations:event.offer-friend-accepted', teamFrom.title, teamTo.title}, colors.green)
         else
-            ownerFrom.print({'relations:event.offer-friend-canceled', teamTo.title}, color.red)
+            ownerFrom.print({'relations:event.offer-friend-canceled', teamTo.title}, colors.red)
         end
     end
 end
@@ -137,9 +137,9 @@ function this.getList(command)
     local owner = getPlayerById(command.player_index)
     local list = relations.base.getList(owner.force)
 
-    owner.print({'relations:result.list-friends', list.friends}, color.green)
-    owner.print({'relations:result.list-enemies', list.enemies}, color.red)
-    owner.print({'relations:result.list-neutrals', list.neutrals}, color.grey)
+    owner.print({'relations:result.list-friends', list.friends}, colors.green)
+    owner.print({'relations:result.list-enemies', list.enemies}, colors.red)
+    owner.print({'relations:result.list-neutrals', list.neutrals}, colors.grey)
 end
 
 function this.setEnemy(command)
