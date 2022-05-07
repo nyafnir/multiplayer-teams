@@ -13,9 +13,11 @@ function logger(text)
     if game ~= nil then
         game.print(record) -- chat
     end
+
     print(record) -- console
     log(record) -- factorio-current.log
 
+    return text
 end
 
 function tableToString(table)
