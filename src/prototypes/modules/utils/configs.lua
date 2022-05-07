@@ -1,10 +1,14 @@
 local prefix = 'multiplayer-teams:'
 
+function getConfigFullName(name)
+    return prefix .. name
+end
+
 --- [Метод] Получение значения настройки (`name` без префикса)
 --- Всегда возвращает строку
 function getConfig(name)
     -- if player ~= nil then
-    --     local runtime_per_user = player.mod_settings[prefix .. name]
+    --     local runtime_per_user = player.mod_settings[getConfigFullName(name)]
     --     if runtime_per_user ~= nil then
     --         return runtime_per_user.value
     --     else
@@ -12,12 +16,12 @@ function getConfig(name)
     --     end
     -- end
 
-    local startup = settings.startup[prefix .. name]
+    local startup = settings.startup[getConfigFullName(name)]
     if startup ~= nil then
         return startup.value
     end
 
-    local runtime_global = settings.global[prefix .. name]
+    local runtime_global = settings.global[getConfigFullName(name)]
     if runtime_global ~= nil then
         return runtime_global.value
     end

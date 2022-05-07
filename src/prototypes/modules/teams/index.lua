@@ -1,8 +1,8 @@
 local this = {
-    model = require('model'),
-    store = require('store'),
-    events = require('events'),
-    commands = require('commands')
+    model = require('prototypes.modules.teams.model'),
+    store = require('prototypes.modules.teams.store'),
+    events = require('prototypes.modules.teams.events'),
+    commands = require('prototypes.modules.teams.commands')
 }
 
 function this.start()

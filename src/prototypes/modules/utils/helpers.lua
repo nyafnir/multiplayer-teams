@@ -10,3 +10,7 @@ function getSize(table)
 
     return #table
 end
+
+function convertMinutesToTicks(minutes)
+    return 60 * 60 * tonumber(minutes)
+end

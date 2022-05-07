@@ -93,4 +93,8 @@ function this.remove(force)
     return teams.store.remove(force.name)
 end
 
+function this.isDefaultTeam(name)
+    return name == teams.store.getDefaultForce().name 
+end
+
 return this

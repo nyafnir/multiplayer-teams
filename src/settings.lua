@@ -1,3 +1,5 @@
+require('prototypes.modules.relations.settings')
+
 --- Настройки отображаемые в `Настройки модов`
 --- https://wiki.factorio.com/Tutorial:Mod_settings#Creation
 
