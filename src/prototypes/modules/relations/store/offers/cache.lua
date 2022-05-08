@@ -28,4 +28,12 @@ function this.remove(ownerToId)
     this._vault[ownerToId] = nil
 end
 
+function this.removeByForceName(forceName)
+    for ownerToId, obj in pairs(this.getAll()) do
+        if obj.forceFromName == forceName or obj.forceToName == forceName then
+            this.remove(ownerToId)
+        end
+    end
+end
+
 return this
