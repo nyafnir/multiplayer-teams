@@ -335,8 +335,8 @@ function this.leave(command)
         return player.print({'teams:error.not-have-team'}, colors.red)
     end
 
-    local oldTitle = oldTeam.title
-    local oldColor = oldTeam.color
+    local oldTitle = team.title
+    local oldColor = team.color
 
     teams.base.leave(player)
 

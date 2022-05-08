@@ -42,7 +42,6 @@ end
 
 --- Изменить команду для игрока на указанную
 function this.change(player, forceTo)
-    logger(forceTo)
     player.force = forceTo
 end
 
