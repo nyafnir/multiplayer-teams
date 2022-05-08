@@ -8,16 +8,16 @@ local function changeRelation(ownerFromId, teamToTitle, relation)
         return ownerFrom.print({'relations:error.not-team-title'}, colors.red)
     end
 
-    local teamTo = teams.store.getByName(teamToTitle)
+    local teamTo = teams.store.teams.getByName(teamToTitle)
     --- Проверка, что команда игроков существует
     --- Проверка, что это не "Без команды"
-    if teamTo == nil or teams.model.isDefaultTeam(teamTo.name) then
+    if teamTo == nil or teams.store.forces.getDefault().name == teamTo.name then
         return ownerFrom.print({'relations:error.not-found-team'}, colors.red)
     end
-    local forceTo = teams.store.getForce(teamTo.name)
+    local forceTo = teams.store.forces.get(teamTo.name)
 
     local forceFrom = ownerFrom.force
-    local teamFrom = teams.store.getByName(forceFrom.name)
+    local teamFrom = teams.store.teams.getByName(forceFrom.name)
     if teamFrom.ownerId ~= ownerFromId then --- Проверка, что это лидер своей команды
         return ownerFrom.print({'relations:error.not-owner'}, colors.red)
     end
@@ -84,11 +84,11 @@ local function changeOffer(ownerToId, isAccept)
 
     relations.store.offers.remove(ownerTo.index)
 
-    local forceFrom = teams.store.getForce(offer.forceFromName)
+    local forceFrom = teams.store.forces.get(offer.forceFromName)
     local forceTo = ownerTo.force
 
-    local teamFrom = teams.store.getByName(offer.forceFromName)
-    local teamTo = teams.store.getByName(offer.forceToName)
+    local teamFrom = teams.store.teams.getByName(offer.forceFromName)
+    local teamTo = teams.store.teams.getByName(offer.forceToName)
 
     local ownerFrom = getPlayerById(teamFrom.ownerId)
 

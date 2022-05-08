@@ -1,10 +1,31 @@
 local this = {}
 
---- [Локальный метод] Вытащить название команды, а затем никнейм игрока из строки
+function this.addCmds()
+    -- Если консольной команды "информации о команде" нет, значит и других нет, тогда загружаем их
+    if commands.commands['team'] ~= nil then
+        return
+    end
+
+    commands.add_command('team', {'teams:help.info'}, teams.commands.info)
+    commands.add_command('teams', {'teams:help.list'}, teams.commands.list)
+    commands.add_command('team-create', {'teams:help.create'}, teams.commands.create)
+    commands.add_command('team-name', {'teams:help.edit-name'}, teams.commands.setName)
+    commands.add_command('team-color', {'teams:help.edit-color'}, teams.commands.setColor)
+    commands.add_command('team-invite', {'teams:help.invite-send'}, teams.commands.inviteSend)
+    commands.add_command('team-invite-accept', {'teams:help.invite-accept'}, teams.commands.inviteAccept)
+    commands.add_command('team-invite-cancel', {'teams:help.invite-cancel'}, teams.commands.inviteCancel)
+    commands.add_command('team-kick', {'teams:help.kick'}, teams.commands.kick)
+    commands.add_command('team-change', {'teams:help.change'}, teams.commands.change)
+    commands.add_command('team-remove', {'teams:help.remove'}, teams.commands.remove)
+    commands.add_command('team-leave', {'teams:help.leave'}, teams.commands.leave)
+end
+
+--- Вытаскивает название команды игроков, а затем ник игрока из строки
 local function getForceAndPlayerFromParameter(str)
     local result = {
         player = nil,
-        force = nil
+        force = nil,
+        team = nil
     }
 
     logger('Got string: ' .. tostring(str))
@@ -36,9 +57,11 @@ local function getForceAndPlayerFromParameter(str)
                 title = title .. ' ' .. word
             end
 
-            local team = teams.store.getByTitle(title) -- мы ожидаем именно название команды, а не `force.name`
+            -- мы ожидаем именно название команды, а не `force.name`
+            local team = teams.store.teams.getByTitle(title)
             if team ~= nil then
-                result.force = teams.store.getForce(team.name)
+                result.team = team
+                result.force = teams.store.forces.get(team.name)
             end
         end
     end
@@ -63,14 +86,15 @@ end
 
 function this.info(command)
     local player = getPlayerById(command.player_index)
-    local team = teams.store.getByName(player.force.name)
-    player.print(teams.model.getInfo(team), team.color)
+    local team = teams.store.teams.getByName(player.force.name)
+    player.print(teams.base.getInfo(team), team.color)
 end
 
 function this.list(command)
     local player = getPlayerById(command.player_index)
-    for _, team in pairs(teams.store.getAll()) do
-        player.print(teams.model.getInfo(team), team.color)
+    player.print({'teams:result.list'}, colors.white)
+    for _, team in pairs(teams.store.teams.getAll()) do
+        player.print(teams.base.getInfo(team), team.color)
     end
 end
 
@@ -78,238 +102,244 @@ function this.create(command)
     local owner = getPlayerById(command.player_index)
     local title = command.parameter
 
-    --- Проверка, что без команды
-    if owner.force.index ~= teams.store.getDefaultForce().index then
-        return player.print({'teams:errors.player-already-in-team'}, colors.red)
-    end
-
-    --- Проверка, что есть место для создания команды
-    if getSize(teams.store.getForces()) >= 61 then -- 61 - это постоянное значение ограничения
-        return owner.print({'teams:errors.reach-force-limit'}, colors.red)
-    end
-
     --- Проверка, что название указано
     if title == nil then
         title = owner.name
     end
 
-    --- Проверка, что название команды не занято и имя для force свободно
-    if teams.store.getByName(title) ~= nil or teams.store.getByTitle(title) ~= nil then
-        return owner.print({'teams:errors.title-already-used'}, colors.red)
+    --- Проверка, что состоит в команде по умолчанию
+    if owner.force.index ~= teams.store.forces.getDefault().index then
+        return owner.print({'teams:error.you-already-in-team'}, colors.red)
     end
 
-    local team = teams.model.create(title, owner)
+    --- Проверка, что есть место для создания команды
+    if getSize(teams.store.forces.getAll()) >= 61 then -- 61 - из доки
+        return owner.print({'teams:error.reach-limit-forces'}, colors.red)
+    end
+
+    --- Проверка, что название команды не занято и имя для force свободно
+    if teams.store.forces.get(title) ~= nil or teams.store.teams.getByTitle(title) ~= nil then
+        return owner.print({'teams:error.title-already-used'}, colors.red)
+    end
+
+    local team = teams.base.create(title, owner)
     game.print({'teams:result.create', team.title}, team.color)
     owner.print({'mod.backstory'}, team.color)
 end
 
-function this.name(command)
+function this.setName(command)
     local owner = getPlayerById(command.player_index)
+    local team = teams.store.teams.getByName(owner.force.name)
+    local oldTitle = team.title
+    local newTitle = command.parameter
 
     --- Проверка, что это владелец команды
-    if not teams.model.isOwner(owner) then
-        return owner.print({'teams:errors.not-permission-owner'}, colors.red)
+    if team.ownerId ~= owner.index then
+        return owner.print({'teams:error.not-owner'}, colors.red)
     end
 
     --- Проверка, что новое название команды указано
-    local title = command.parameter
-    if title == nil then
-        return owner.print({'teams:errors.title-not-specified'}, colors.red)
+    if newTitle == nil then
+        return owner.print({'teams:error.title-not-specified'}, colors.red)
     end
 
     --- Проверка, что название команды не занято
-    if teams.store.getByTitle(title) ~= nil then
-        return owner.print({'teams:errors.title-already-used'}, colors.red)
+    if teams.store.teams.getByTitle(newTitle) ~= nil then
+        return owner.print({'teams:error.title-already-used'}, colors.red)
     end
 
     --- Редактируем и сообщаем всем об изменении
-    local oldTitle = teams.store.getByName(owner.force.name).title
-    local team = teams.model.editTitle(owner.force, title)
-    return game.print({'teams:result.edit-name', oldTitle, team.title}, team.color)
+    team = teams.base.editTitle(team, newTitle)
+    return game.print({'teams:result.edit-name', oldTitle, newTitle}, team.color)
 end
 
-function this.color(command)
+function this.setColor(command)
     local owner = getPlayerById(command.player_index)
+    local team = teams.store.teams.getByName(owner.force.name)
 
     --- Проверка, что это владелец команды
-    if not teams.model.isOwner(owner) then
-        return owner.print({'teams:errors.not-permission-owner'}, colors.red)
+    if team.ownerId ~= owner.index then
+        return owner.print({'teams:error.not-owner'}, colors.red)
     end
 
     --- Проверка, что цвет не тот же самый
-    local oldColor = teams.store.getByName(owner.force.name).color
-    if isEqualRGBAColors(owner.color, oldColor) then
-        return owner.print({'teams:errors.color-already-use'}, colors.red)
+    if isEqualRGBAColors(owner.color, team.color) then
+        return owner.print({'teams:error.color-already-use'}, colors.red)
     end
 
     --- Редактируем и сообщаем всем об изменении
-    local team = teams.model.editColor(owner.force, owner.color)
+    local team = teams.base.editColor(team, owner.color)
     return game.print({'teams:result.edit-color', team.title}, team.color)
 end
 
 function this.inviteSend(command)
     local owner = getPlayerById(command.player_index)
-
-    --- Проверка, что это владелец команды
-    if not teams.model.isOwner(owner) then
-        return owner.print({'teams:errors.not-permission-owner'}, colors.red)
-    end
-
-    --- Проверка, что никнейм указан
+    local team = teams.store.teams.getByName(owner.force.name)
     local player = getPlayerByName(command.parameter)
+
+    --- Проверка, что это лидер команды
+    if team.ownerId ~= owner.index then
+        return owner.print({'teams:error.not-owner'}, colors.red)
+    end
+
+    --- Проверка, что ник указан
     if player == nil then
-        return owner.print({'teams:errors.player-not-found'}, colors.red)
+        return owner.print({'teams:error.player-not-found'}, colors.red)
     end
 
-    --- Проверка, что без команды
-    if player.force.index ~= teams.store.getDefaultForce().index then
-        return player.print({'teams:errors.player-already-in-team'}, colors.red)
+    --- Проверка, что нет команды
+    if player.force.index ~= teams.store.forces.getDefault().index then
+        return owner.print({'teams:error.player-already-in-team'}, colors.red)
     end
 
-    local timeout = getConfig('teams:invite-timeout')
+    local timeout = teams.config.invite.timeout.minutes
 
     --- Проверка, что приглашения у игрока на рассмотрении нет
-    if teams.store.invites.get(player) ~= nil then
-        return owner.print({'teams:errors.already-have-invite', timeout}, colors.yellow)
+    if teams.store.invites.get(player.index) ~= nil then
+        return owner.print({'teams:error.already-have-invite', timeout}, colors.yellow)
     end
 
-    teams.store.invites.set(owner.force, player)
+    teams.store.invites.set(owner.force.name, player.index)
 
-    local team = teams.store.getByName(owner.force.name)
-    owner.print({'teams:result.invite-send', player.name, timeout}, team.color)
-    player.print({'teams:events.invite-getted', team.title, timeout}, team.color)
+    owner.print({'teams:event.invite-sended', player.name, timeout}, team.color)
+    player.print({'teams:event.invite-getted', team.title, timeout}, team.color)
 end
 
 function this.inviteAccept(command)
     local player = getPlayerById(command.player_index)
+    local invite = teams.store.invites.get(player.index)
 
-    --- Проверка, что у нас есть приглашение для одобрения
-    local invite = teams.store.invites.get(player)
+    --- Проверка, что у нас есть приглашение
     if invite == nil then
-        return player.print({'teams:errors.not-have-invite'}, colors.yellow)
+        return player.print({'teams:error.not-have-invite'}, colors.yellow)
     end
 
-    teams.store.invites.remove(player)
+    local forceName = invite.forceFromName
+    teams.store.invites.remove(player.index)
 
-    --- Проверка, что команда не была удалена
-    local force = teams.store.getForce(invite.forceName)
-    if force == nil then
-        return player.print({'teams:errors.team-not-found'}, colors.red)
-    end
+    local force = teams.store.forces.get(forceName)
+    teams.base.change(player, force)
 
-    local team = teams.model.changeTeamForPlayer(player, force)
-    game.print({'teams:events.invite-accepted', player.name, team.title}, team.color)
+    local team = teams.store.teams.getByName(forceName)
+    game.print({'teams:event.invite-accepted', player.name, team.title}, team.color)
 end
 
 function this.inviteCancel(command)
     local player = getPlayerById(command.player_index)
 
     --- Проверка, что у нас есть приглашение для отклонения
-    local invite = teams.store.invites.get(player)
+    local invite = teams.store.invites.get(player.index)
     if invite == nil then
-        return player.print({'teams:errors.not-have-invite'}, colors.yellow)
+        return player.print({'teams:error.not-have-invite'}, colors.yellow)
     end
 
-    teams.store.invites.remove(player)
+    local forceName = invite.forceFromName
+    teams.store.invites.remove(player.index)
 
-    local team = teams.store.getByName(invite.forceName)
-    game.print({'teams:events.invite-canceled', player.name, team.title}, team.color)
+    local team = teams.store.teams.getByName(forceName)
+    game.print({'teams:event.invite-canceled', player.name, team.title}, team.color)
 end
 
 function this.kick(command)
     local owner = getPlayerById(command.player_index)
+    local player = getPlayerByName(command.parameter)
+    local team = teams.store.teams.getByName(owner.force.name)
 
     --- Проверка, что это владелец команды
-    if not teams.model.isOwner(owner) then
-        return owner.print({'teams:errors.not-permission-owner'}, colors.red)
-    end
-
-    --- Проверка, что никнейм указан
-    local player = getPlayerByName(command.parameter)
-    if player == nil then
-        return owner.print({'teams:errors.player-not-found'}, colors.red)
-    end
-
-    --- Проверка, что игрок в той же команде
-    if owner.force.index ~= player.force.index then
-        return owner.print({'teams:errors.player-not-in-team'}, colors.red)
+    if team.ownerId ~= owner.index then
+        return owner.print({'teams:error.not-owner'}, colors.red)
     end
 
     --- Проверка, что это не лидер
     if owner == player then
-        return owner.print({'teams:errors.can-t-kick-owner'}, colors.red)
+        return owner.print({'teams:error.can-t-kick-owner'}, colors.red)
     end
 
-    local oldTeam = teams.store.getByName(owner.force.name)
-    teams.model.kick(player)
-    game.print({'teams:result.kick', player.name, oldTeam.title}, oldTeam.color)
+    --- Проверка, что ник указан
+    if player == nil then
+        return owner.print({'teams:error.player-not-found'}, colors.red)
+    end
+
+    --- Проверка, что игрок в той же команде
+    if owner.force.index ~= player.force.index then
+        return owner.print({'teams:error.player-not-in-team'}, colors.red)
+    end
+
+    teams.base.kick(player)
+    game.print({'teams:result.kick', player.name, team.title}, team.color)
 end
 
 function this.change(command)
-    local player = getPlayerById(command.player_index)
+    local owner = getPlayerById(command.player_index)
 
-    --- Проверка, что это администратор
-    if not player.admin then
-        return game.print({'errors.not-admin', player.name, command.name})
+    --- Проверка, что это админ
+    if owner.admin == false then
+        return game.print({'errors.not-admin', owner.name, command.name})
     end
 
     --- Получение и проверка переданных параметров
     local params = getForceAndPlayerFromParameter(command.parameter)
     if params.force == nil then
-        return player.print({'teams:errors.team-not-found'}, colors.red)
+        return owner.print({'teams:error.team-not-found'}, colors.red)
     end
     if params.player == nil then
-        return player.print({'teams:errors.player-not-found'}, colors.red)
+        return owner.print({'teams:error.player-not-found'}, colors.red)
     end
 
     --- Проверка, что игрок ещё не состоит в команде
     if params.force.index == params.player.force.index then
-        return player.print({'teams:errors.player-already-in-team'}, colors.red)
+        return owner.print({'teams:error.player-already-in-team'}, colors.red)
     end
 
-    local oldTitle = teams.store.getByName(params.player.force.name).title
+    local team = teams.store.teams.getByName(params.player.force.name)
+    local oldTitle = team.title
 
-    --- Проверка, что это не последний игрок команды
-    if getSize(params.player.force.players) == 1 then
-        teams.model.remove(params.player.force)
+    --- Проверка, что это не лидер команды, иначе распустить её
+    if team.ownerId == params.player.index then
+        teams.base.remove(params.player.force.name)
     end
 
-    local team = teams.model.changeTeamForPlayer(params.player, params.force)
-    return game.print({'teams:result.change', params.player.name, oldTitle, team.title}, team.color)
+    teams.base.change(params.player, params.force)
+
+    return game.print({'teams:result.change', params.player.name, oldTitle, params.team.title}, params.team.color)
 end
 
 function this.remove(command)
     local owner = getPlayerById(command.player_index)
+    local team = teams.store.teams.getByName(owner.force.name)
 
     --- Проверка, что это владелец команды
-    if not teams.model.isOwner(owner) then
-        return owner.print({'teams:errors.not-permission-owner'}, colors.red)
+    if team.ownerId ~= owner.index then
+        return owner.print({'teams:error.not-owner'}, colors.red)
     end
 
-    local oldTeam = teams.store.getByName(owner.force.name)
-    local oldTitle = oldTeam.title
-    local oldColor = oldTeam.color
-    teams.model.remove(owner.force)
+    local oldTitle = team.title
+    local oldColor = team.color
+
+    teams.base.remove(team.name)
+
     game.print({'teams:result.remove', oldTitle}, oldColor)
 end
 
 function this.leave(command)
     local player = getPlayerById(command.player_index)
+    local team = teams.store.teams.getByName(player.force.name)
 
     --- Проверка, что это не владелец команды
-    if teams.model.isOwner(player) then
-        return player.print({'teams:errors.can-t-leave-owner'}, colors.red)
+    if team.ownerId == player.index then
+        return player.print({'teams:error.can-t-leave-owner'}, colors.red)
     end
 
-    --- Проверка, что в команде
-    if player.force.index == teams.store.getDefaultForce().index then
-        return player.print({'teams:errors.not-have-team'}, colors.red)
+    --- Проверка, что есть команда
+    if team.id == teams.store.forces.getDefault().index then
+        return player.print({'teams:error.not-have-team'}, colors.red)
     end
 
-    local oldTeam = teams.store.getByName(player.force.name)
-    local oldTitle = oldTeam.title
-    local oldColor = oldTeam.color
-    teams.model.leave(player)
+    local oldTitle = team.title
+    local oldColor = team.color
+
+    teams.base.leave(player)
+
     game.print({'teams:result.leave', player.name, oldTitle}, oldColor)
 end
 
