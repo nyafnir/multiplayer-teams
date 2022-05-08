@@ -11,7 +11,7 @@ local function changeRelation(ownerFromId, teamToTitle, relation)
     local teamTo = teams.store.teams.getByName(teamToTitle)
     --- Проверка, что команда игроков существует
     --- Проверка, что это не "Без команды"
-    if teamTo == nil or teams.model.isDefaultTeam(teamTo.name) then
+    if teamTo == nil or teams.store.forces.getDefault().name == teamTo.name then
         return ownerFrom.print({'relations:error.not-found-team'}, colors.red)
     end
     local forceTo = teams.store.forces.get(teamTo.name)

@@ -21,14 +21,6 @@ function this.create(name, owner)
     return teams.store.teams.create(force, owner)
 end
 
-function this.isOwner(team, player)
-    if team.ownerId == player.index then
-        return true
-    end
-
-    return false
-end
-
 function this.hasPlayer(force, player)
     if force.players[player.index] ~= nil then
         return true

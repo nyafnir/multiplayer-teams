@@ -1,17 +1,16 @@
 local this = {}
 
 local function init()
-    if global.teams ~= nil or next(global.teams) then
+    if getSize(global.teams) > 0 then
         return
     end
 
+    global.teams = {}
+
     --- Добавляем команду по умолчанию
-    local forceDefault = teams.store.forces.getDefault()
-    local teamDefault = teams.model.new(forceDefault, nil)
+    local teamDefault = this.new(teams.store.forces.getDefault(), nil)
     teamDefault.title = 'Без команды'
-    global.teams = {
-        [teamDefault.name] = forceDefault
-    }
+    global.teams[teamDefault.name] = teamDefault
 
     --- Если модуль не был инициализирован в начале, то он возьмёт данные по командам игроков из игры
     for forceName, force in pairs(teams.store.forces.getAll()) do
@@ -36,7 +35,7 @@ function this.getAll()
     return global.teams
 end
 
-function this.create(force, owner)
+function this.new(force, owner)
     local team = {
         id = force.index,
         name = force.name, --- оригинальное имя, никогда не меняется
@@ -49,6 +48,12 @@ function this.create(force, owner)
         team.color = owner.color
         team.ownerId = owner.index
     end
+
+    return team
+end
+
+function this.create(force, owner)
+    local team = this.new(force, owner)
 
     this.getAll()[team.name] = team
 

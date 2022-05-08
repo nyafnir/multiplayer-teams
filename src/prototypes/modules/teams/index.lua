@@ -10,6 +10,7 @@ function this.start()
     if getConfig('teams:enable') == true then
         this.commands.addCmds()
         script.on_event(defines.events.on_player_created, this.events.onJoinNewPlayer)
+        script.on_event(defines.events.on_forces_merging, this.events.onRemovingForce)
     end
 end
 
