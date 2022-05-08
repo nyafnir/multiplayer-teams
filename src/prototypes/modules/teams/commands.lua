@@ -214,7 +214,7 @@ function this.inviteAccept(command)
         return player.print({'teams:error.not-have-invite'}, colors.yellow)
     end
 
-    local forceName = invite.forceName
+    local forceName = invite.forceFromName
     teams.store.invites.remove(player.index)
 
     local force = teams.store.forces.get(forceName)
@@ -233,7 +233,7 @@ function this.inviteCancel(command)
         return player.print({'teams:error.not-have-invite'}, colors.yellow)
     end
 
-    local forceName = invite.forceName
+    local forceName = invite.forceFromName
     teams.store.invites.remove(player.index)
 
     local team = teams.store.teams.getByName(forceName)
