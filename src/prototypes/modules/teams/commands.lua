@@ -254,7 +254,7 @@ function this.change(command)
 
     --- Проверка, что это админ
     if owner.admin == false then
-        return game.print({'errors.not-admin', owner.name, command.name})
+        return game.print({'teams:error.not-admin', owner.name, command.name})
     end
 
     --- Получение и проверка переданных параметров
