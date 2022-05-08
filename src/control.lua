@@ -4,7 +4,7 @@ teams = require('prototypes.modules.teams.index')
 relations = require('prototypes.modules.relations.index') -- Строго после `teams`
 local gui = require('prototypes.gui.index')
 
---- [Метод] init в обоих случаях: инициализация карты и загрузка/сохранение
+--- init в обоих случаях: инициализация карты и загрузка/сохранение
 local function start()
     --- Если это игровая компания, то не запускать мод
     if script.level.campaign_name ~= nil then

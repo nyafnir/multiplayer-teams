@@ -4,7 +4,7 @@ function getConfigFullName(name)
     return prefix .. name
 end
 
---- [Метод] Получение значения настройки (`name` без префикса)
+--- Получение значения настройки (`name` без префикса)
 --- Всегда возвращает строку
 function getConfig(name)
     -- if player ~= nil then
