@@ -119,8 +119,8 @@ function this.addCmds()
         commands.add_command('relation-enemy', {'relations:help.set-enemy'}, this.setEnemy)
         commands.add_command('relation-neutral', {'relations:help.set-neutral'}, this.setNeutral)
         commands.add_command('relation-friend', {'relations:help.set-friend'}, this.setFriend)
-        commands.add_command('relation-accept', {'relations:help.offer-accept'}, this.acceptOffer)
-        commands.add_command('relation-cancel', {'relations:help.offer-cancel'}, this.cancelOffer)
+        commands.add_command('relation-offer-accept', {'relations:help.offer-accept'}, this.acceptOffer)
+        commands.add_command('relation-offer-cancel', {'relations:help.offer-cancel'}, this.cancelOffer)
     end
 end
 
