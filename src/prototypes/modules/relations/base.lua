@@ -7,10 +7,12 @@ function this.getList(forceFrom)
         neutrals = {}
     }
 
-    for nameTo, team in pairs(teams.store.getAll()) do
-        local forceTo = teams.store.getForce(nameTo)
+    local teams = teams.store.teams.getAll()
+    local default = teams.store.forces.getDefault()
+    for nameTo, team in pairs(teams) do
+        local forceTo = teams.store.forces.get(nameTo)
 
-        if nameTo == teams.store.getDefaultForce().name or nameTo == forceFrom.name then
+        if nameTo == default.name or nameTo == forceFrom.name then
             goto relations_base_list_continue
         end
 

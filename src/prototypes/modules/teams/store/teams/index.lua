@@ -36,46 +36,32 @@ function this.getAll()
     return global.teams
 end
 
-function this.add(team)
+function this.create(force, owner)
+    local team = {
+        id = force.index,
+        name = force.name, --- оригинальное имя, никогда не меняется
+        title = force.name, --- отображаемое имя, может меняться
+        color = colors.white,
+        ownerId = nil
+    }
+
+    if owner ~= nil then
+        team.color = owner.color
+        team.ownerId = owner.index
+    end
+
     this.getAll()[team.name] = team
+
     return team
 end
 
-function this.create(force, owner)
-    return this.add(teams.model.new(force, owner))
-end
-
 function this.remove(name)
-    local default = teams.store.forces.getDefault()
-
-    --- Проверяем, что это не команда по умолчанию (недоступна для удаления у нас)
-    if name ~= default.name then
-        --- Убраем всех игроков из команды
-        local force = teams.store.forces.get(name)
-        for _, player in pairs(force.players) do
-            teams.model.changeTeamForPlayer(player, default)
-        end
-        --- Удаляем `force`
-        game.merge_forces(name, default.name)
-        --- Удаляем `team`
-        this.getAll()[name] = nil
-    end
-
-    return this.getAll()[default.name]
+    --- Удаляем `team`
+    this.getAll()[name] = nil
 end
 
-function this.getByName(teamName)
-    return this.getAll()[teamName]
-end
-
-function this.getById(teamId)
-    for _, team in pairs(this.getAll()) do
-        if team.id == teamId then
-            return team
-        end
-    end
-
-    return nil
+function this.getByName(name)
+    return this.getAll()[name]
 end
 
 function this.getByTitle(title)
