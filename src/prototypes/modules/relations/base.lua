@@ -1,15 +1,15 @@
 local this = {}
 
 function this.getList(forceFrom)
-    local list = {
+    local result = {
         friends = {},
         enemies = {},
         neutrals = {}
     }
 
-    local teams = teams.store.teams.getAll()
+    local list = teams.store.teams.getAll()
     local default = teams.store.forces.getDefault()
-    for nameTo, team in pairs(teams) do
+    for nameTo, team in pairs(list) do
         local forceTo = teams.store.forces.get(nameTo)
 
         if nameTo == default.name or nameTo == forceFrom.name then
@@ -17,12 +17,12 @@ function this.getList(forceFrom)
         end
 
         if forceFrom.is_friend(forceTo) then
-            table.insert(list.friends, team.title)
+            table.insert(result.friends, team.title)
         else
             if forceFrom.is_enemy(forceTo) then
-                table.insert(list.enemies, team.title)
+                table.insert(result.enemies, team.title)
             else
-                table.insert(list.neutrals, team.title)
+                table.insert(result.neutrals, team.title)
             end
         end
 
@@ -30,9 +30,9 @@ function this.getList(forceFrom)
     end
 
     return {
-        friends = table.concat(list.friends,', '),
-        enemies = table.concat(list.enemies,', '),
-        neutrals = table.concat(list.neutrals,', '),
+        friends = table.concat(result.friends, ', '),
+        enemies = table.concat(result.enemies, ', '),
+        neutrals = table.concat(result.neutrals, ', '),
     }
 end
 
