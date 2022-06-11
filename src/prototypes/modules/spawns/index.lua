@@ -1,14 +1,13 @@
 local this = {
     config = require('prototypes.modules.spawns.config'),
-    -- store = require('prototypes.modules.spawns.store.index'),
+    store = require('prototypes.modules.spawns.store.index'),
     base = require('prototypes.modules.spawns.base'),
-    -- events = require('prototypes.modules.spawns.events'),
-    -- commands = require('prototypes.modules.spawns.commands')
+    commands = require('prototypes.modules.spawns.commands')
 }
 
 function this.start()
-    if getConfig('spawns:enable') == true then
-        -- this.commands.addCmds()
+    if this.config.enable == true then
+        this.commands.init()
     end
 end
 
