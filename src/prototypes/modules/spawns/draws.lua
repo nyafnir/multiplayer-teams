@@ -21,7 +21,7 @@ end
 
 --- Преобразовать радиус в координаты для заливки области в виде квадрата и вернуть их
 --- этот метод учитывает отрицательность координат
-function this.convertRadiusToSquareParams(surface, center, radius, entityName, amount)
+function this.convertRadiusToSquareOptions(surface, center, radius, entityName, amount)
     local leftTopPoint = {
         x = math.floor(center.x - radius * math.sign(center.x)),
         y = math.floor(center.y - radius * math.sign(center.y))
