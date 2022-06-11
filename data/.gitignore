@@ -1,2 +1,5 @@
 # Graphics
 *.xcf
+
+# Excel temps
+~$*
