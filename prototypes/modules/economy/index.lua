@@ -137,11 +137,12 @@ local function salary(player)
             if sum > 0 then
                 addCash(player.name, sum)
                 player.print('Начисление зп в размере ' .. sum .. ' всего на счету: ' ..
-                                 global.economy.balances[player.name].coins)
+                    global.economy.balances[player.name].coins)
             else
                 player.print(
-                    'Корпарация вами не довольна. В этот раз вы потратили ресурсов больше чем добыли, поэтому деньги не будут начислены.\nВсего на счету: ' ..
-                        global.economy.balances[player.name].coins)
+                    'Корпарация вами не довольна. В этот раз вы потратили ресурсов больше чем добыли, поэтому деньги не будут начислены.\nВсего на счету: '
+                    ..
+                    global.economy.balances[player.name].coins)
             end
             iteration, sum = 0, 0
         end
@@ -193,6 +194,7 @@ local function showShopBuyUI(player, entity)
 
         local function drawShopGUI()
             Styles.addInventory(contentFrame, player.get_main_inventory())
+            local separator = '='
 
             local shopGUI = contentFrame.add({
                 type = 'frame',
@@ -210,22 +212,20 @@ local function showShopBuyUI(player, entity)
                 local inventory = entity.get_inventory(defines.inventory.chest)
                 shopInventory = {}
                 local itemsWithEquipment = 0
-                local separator = '='
                 for i = 1, #inventory do
                     local item = inventory[i]
                     if item.valid_for_read then
                         local price = global.economy.prices[item.name]
                         if item.grid then
-                            --
-                            -- надо проверить grid и прибавить к стоимости
-                            -- get_contents --Get counts of all equipment in this grid. //dictionary[string → uint]
-                            -- equipment --All the equipment in this grid //array[LuaEquipment]
-                            -- put --Insert an equipment into the grid. //{name=…, position=…, by_player=…} => LuaEquipment?
-                            --
+                            local gridOfEquipment = item.grid.get_contents()
+                            local equipmentPrice = 0;
+                            for equipmentName, count in pairs(gridOfEquipment) do
+                                equipmentPrice = equipmentPrice + global.economy.prices[equipmentName] * count
+                            end
                             shopInventory[item.name .. separator .. itemsWithEquipment] = {
                                 name = item.name,
-                                price = price,
-                                equipment = {} -- item.equipment_grid --здесь мб просто массив будет а потом уже конвертироват его при покупке
+                                price = price + equipmentPrice,
+                                equipment = gridOfEquipment
                             }
                             itemsWithEquipment = itemsWithEquipment + 1
                         else
@@ -286,9 +286,10 @@ local function showShopBuyUI(player, entity)
             end
 
             local function isHasEquipment(name)
-                local resultTable = split(name, separator)
+                local resultTable = Utils.string.split(name, separator)
                 return #resultTable > 1
             end
+
             -- таблица с итемами
             local function drawInventoryShop()
                 if orderContent['button_frame'] ~= nil then
@@ -309,6 +310,12 @@ local function showShopBuyUI(player, entity)
                 }
                 for key, item in pairs(shopInventory) do
                     local buttonStyle = (key == selectedItem) and "yellow_slot_button" or "recipe_slot_button"
+                    local equipment = ""
+                    if item.equipment ~= nil then
+                        for equipmentName, count in pairs(item.equipment) do
+                            equipment = { "", equipment, "\n", { "equipment-name." .. equipmentName }, ": ", count }
+                        end
+                    end
                     local btn = button_table.add {
                         type = "sprite-button",
                         sprite = ("item/" .. item.name),
@@ -317,7 +324,8 @@ local function showShopBuyUI(player, entity)
                             action = prefix .. "-select_item_for_buy",
                             itemName = key
                         },
-                        tooltip = 'Стоимость: ' .. item.price
+                        tooltip = { "", { "item-name." .. item.name }, '\nСтоимость: ', item.price, ' €$',
+                            equipment }
                     }
                     if isHasEquipment(key) then
                         btn.tags.equipment = item.equipment
@@ -329,8 +337,8 @@ local function showShopBuyUI(player, entity)
 
             drawInventoryShop()
 
-            function drawOrderController()
-                
+            local function drawOrderController()
+
                 if buyControl ~= nil then
                     buyControl.clear()
                 end
@@ -352,31 +360,31 @@ local function showShopBuyUI(player, entity)
                 local controls_slider = buyControl.add {
                     type = "slider",
                     name = prefix .. "-controls_slider",
-                    value = math.min(options.count or 0),
+                    value = math.min(options.count or 1),
                     minimum_value = 0,
                     maximum_value = selectedItem ~= '' and shopInventory[selectedItem].count or 1,
                     style = "notched_slider"
                 }
-                controls_slider.enabled = selectedItem ~= ''
+                controls_slider.enabled = selectedItem ~= '' and shopInventory[selectedItem].count or 1 > 1
 
                 local controls_textfield = buyControl.add {
                     type = "textfield",
                     name = prefix .. "-controls_textfield",
-                    text = tostring(options.count or 0),
+                    text = tostring(options.count or 1),
                     numeric = true,
                     allow_decimal = false,
                     allow_negative = false,
                     style = prefix .. "-controls-textfield"
                 }
 
-                controls_textfield.enabled = selectedItem ~= ''
+                controls_textfield.enabled = selectedItem ~= '' and shopInventory[selectedItem].count or 1 > 1
 
                 buyControl.add({
                     type = 'button',
                     style = 'confirm_button',
                     name = prefix .. "-controls-button",
                     caption = 'Купить',
-                    enabled = selectedItem ~= ''
+                    enabled = selectedItem ~= '' and options.count > 0
                 })
 
                 script.on_event(defines.events.on_gui_value_changed, function(event)
@@ -388,7 +396,7 @@ local function showShopBuyUI(player, entity)
                 script.on_event(defines.events.on_gui_text_changed, function(event)
                     if event.element.name == prefix .. "-controls_textfield" then
                         local value =
-                            math.min(tonumber(event.element.text) or 0, shopInventory[selectedItem].count or 1)
+                        math.min(tonumber(event.element.text) or 0, shopInventory[selectedItem].count or 1)
                         controls_slider.slider_value = value
                         controls_textfield.text = tostring(value)
                     end
@@ -401,32 +409,36 @@ local function showShopBuyUI(player, entity)
                 end)
 
             end
+
             drawOrderController()
             player.opened = gui
 
+
+            -- player.print(serpent.dump(shopInventory))
+            script.on_event(defines.events.on_gui_click, function(event)
+                local element = event.element
+                if not element.valid then
+                    return
+                end
+                if element.tags.action == prefix .. "-select_item_for_buy" then
+                    local selectedItem = element.tags.itemName
+                    -- player[prefix]['shop-buy'].selectedItem = selectedItem
+                    options.count = 1
+                    options.selectedItem = selectedItem
+                    drawInventoryShop()
+                    drawOrderController()
+                    return
+                end
+
+                if element.name == "my-mod-x-button" then
+                    element.parent.parent.destroy()
+                    return
+                end
+            end)
+
         end
+
         drawShopGUI()
-        -- player.print(serpent.dump(shopInventory))
-
-        script.on_event(defines.events.on_gui_click, function(event)
-            local element = event.element
-            if not element.valid then
-                return
-            end
-            if element.tags.action == prefix .. "-select_item_for_buy" then
-                local selectedItem = element.tags.itemName
-                -- player[prefix]['shop-buy'].selectedItem = selectedItem
-                options.selectedItem = selectedItem
-                drawInventoryShop()
-                drawOrderController()
-                return
-            end
-
-            if element.name == "my-mod-x-button" then
-                element.parent.parent.destroy()
-                return
-            end
-        end)
 
     end
 end

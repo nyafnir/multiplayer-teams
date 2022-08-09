@@ -57,7 +57,6 @@ function Styles.addInventory(gui, inventory)
         local item = inventory[i]
 
         if item.valid_for_read then
-            logger(item)
             local b = slotTable.add {
                 type = "choose-elem-button",
                 elem_type = 'item',
