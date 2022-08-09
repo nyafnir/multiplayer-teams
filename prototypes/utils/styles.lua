@@ -1,6 +1,6 @@
-local Styles = {}
+local this = {}
 
-function Styles.addTitlebar(gui, caption, close_button_name)
+function this.addTitlebar(gui, caption, close_button_name)
     local titlebar = gui.add {
         type = "flow"
     }
@@ -25,15 +25,15 @@ function Styles.addTitlebar(gui, caption, close_button_name)
         sprite = "utility/close_white",
         hovered_sprite = "utility/close_black",
         clicked_sprite = "utility/close_black",
-        tooltip = {"gui.close-instruction"}
+        tooltip = { "gui.close-instruction" }
     }
 end
 
-function Styles.addInventory(gui, inventory)
-
+function this.addInventory(gui, inventory)
     if gui ~= nil then
         gui.clear()
     end
+
     local playerGUI = gui.add({
         type = "frame",
         name = "player-scroll-pane",
@@ -93,4 +93,4 @@ function Styles.addInventory(gui, inventory)
 
 end
 
-return Styles
+return this
