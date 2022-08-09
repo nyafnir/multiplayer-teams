@@ -6,4 +6,8 @@ require('prototypes.services.index')
 
 ---Здесь подключаются стили используемые по проекту
 
+require('prototypes.modules.economy.prototypes.items')
+require('prototypes.modules.economy.prototypes.recipes')
+require('prototypes.modules.economy.prototypes.entities')
+require('prototypes.modules.economy.prototypes.style')
 require('prototypes.modules.gui.components.main-button.style')
