@@ -10,7 +10,7 @@ offerModule = require('prototypes.modules.offers.module')
 -- spawnModule = require('prototypes.modules.spawns.module')
 teamModule = require('prototypes.modules.teams.module') -- Использует `spawnModule`, `offerModule`
 -- relationModule = require('prototypes.modules.relations.module') -- Использует `teamModule`, `offerModule`
--- economyModule = require('prototypes.modules.economy.module') -- Использует `teamModule`
+economyModule = require('prototypes.modules.economy.module') -- Использует `teamModule`
 questModule = require('prototypes.modules.quests.module') -- Использует `economyModule`
 guiModule = require('prototypes.modules.gui.module') -- Последний, так как собирается из остальных модулей
 
@@ -18,7 +18,7 @@ guiModule = require('prototypes.modules.gui.module') -- Последний, та
 script.on_init(function()
     offerModule.on_init()
     teamModule.on_init()
-    -- economyModule.on_init()
+    economyModule.on_init()
     -- relationModule.on_init()
     -- spawnModule.on_init()
     questModule.on_init()
@@ -30,7 +30,7 @@ end)
 script.on_load(function()
     offerModule.on_load()
     teamModule.on_load()
-    -- economyModule.on_load()
+    economyModule.on_load()
     -- relationModule.on_load()
     -- spawnModule.on_load()
     questModule.on_load()

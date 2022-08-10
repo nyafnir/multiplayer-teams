@@ -1,3 +1,4 @@
+require("prototypes.modules.economy.ttl")
 mod_gui = require("mod-gui")
 local prefix = 'multiplayer-teams'
 
@@ -9,19 +10,14 @@ local EXTRA_CHARGE = 1
 local ORE_PRICE = 1
 -- fluid magic коээфицент для жидкостей
 local FLUID_COEFFICIENT = 0.05
--- врмея ЗП в минутах
-local TIME_SALARY = 2
--- 1 секунда = 60 тиков, 1 минута = 60 тиков * 60 секунд
-local ticksToSalary = 60 * 60
 
 ---при первом запуске проинициализировать цену продукции
-local function initPrices(player)
+local function initPrices(force)
     local function checkReceipt(name)
         if global.economy.prices[name] then
             return global.economy.prices[name]
         end
-
-        local receipt = player.force.recipes[name]
+        local receipt = force.recipes[name]
         if receipt == nil then
             global.economy.prices[name] = ORE_PRICE
             return ORE_PRICE
@@ -33,7 +29,8 @@ local function initPrices(player)
             if ingredient.type == 'fluid' then
                 price = price + ingredient.amount * FLUID_COEFFICIENT
             else
-                price = price + checkReceipt(ingredient.name) * ingredient.amount
+                price = price + checkReceipt(ingredient.name) *
+                            ingredient.amount
             end
         end
 
@@ -47,9 +44,7 @@ local function initPrices(player)
         return result
     end
 
-    for item, _ in pairs(game.item_prototypes) do
-        local result = checkReceipt(item)
-    end
+    for item, _ in pairs(game.item_prototypes) do checkReceipt(item) end
 
 end
 
@@ -57,97 +52,11 @@ local function setCash(playerName, cash)
     global.economy.balances[playerName].coins = cash
 end
 
-local function addCash(playerName, cash)
-    global.economy.balances[playerName].coins = global.economy.balances[playerName].coins + cash
-end
-
 local function popCash(playerName, cash)
-    if cash > global.economy.balances[playerName].coins then
-        return false
-    end
-    global.economy.balances[playerName].coins = global.economy.balances[playerName].coins - cash
+    if cash > global.economy.balances[playerName].coins then return false end
+    global.economy.balances[playerName].coins =
+        global.economy.balances[playerName].coins - cash
     return true
-end
-
-local function accamulateSalary(player)
-    local sum = 0
-    for item, _ in pairs(game.fluid_prototypes) do
-        if item == 'water' then
-            goto continue
-        end
-        local icf, ocf = 0, 0
-        icf = player.force.fluid_production_statistics.get_flow_count({
-            name = item,
-            input = true,
-            precision_index = defines.flow_precision_index.one_minute,
-            count = true
-        })
-        ocf = player.force.fluid_production_statistics.get_flow_count({
-            name = item,
-            input = false,
-            precision_index = defines.flow_precision_index.one_minute,
-            count = true
-        })
-
-        if icf > 0 then
-            sum = sum + math.floor(icf * FLUID_COEFFICIENT)
-        end
-
-        if ocf > 0 then
-            sum = sum - math.floor(ocf * FLUID_COEFFICIENT)
-        end
-        ::continue::
-    end
-    for item, _ in pairs(game.item_prototypes) do
-        local ic, oc = 0, 0
-        ic = player.force.item_production_statistics.get_flow_count({
-            name = item,
-            input = true,
-            precision_index = defines.flow_precision_index.one_minute,
-            count = true
-        })
-        local fic = player.force.item_production_statistics.get_flow_count({
-            name = item,
-            input = true,
-            precision_index = defines.flow_precision_index.one_minute,
-            count = false
-        })
-        oc = player.force.item_production_statistics.get_flow_count({
-            name = item,
-            input = false,
-            precision_index = defines.flow_precision_index.one_minute,
-            count = true
-        })
-        if ic > 0 then
-            sum = sum + ic * global.economy.prices[item]
-        end
-        if oc > 0 then
-            sum = sum - oc * global.economy.prices[item]
-        end
-    end
-    return sum
-end
-
-local function salary(player)
-    local iteration, sum = 0, 0
-    script.on_nth_tick(ticksToSalary, function(event)
-        iteration = iteration + 1
-        sum = sum + accamulateSalary(player)
-        if iteration == TIME_SALARY then
-            if sum > 0 then
-                addCash(player.name, sum)
-                player.print('Начисление зп в размере ' .. sum .. ' всего на счету: ' ..
-                    global.economy.balances[player.name].coins)
-            else
-                player.print(
-                    'Корпарация вами не довольна. В этот раз вы потратили ресурсов больше чем добыли, поэтому деньги не будут начислены.\nВсего на счету: '
-                    ..
-                    global.economy.balances[player.name].coins)
-            end
-            iteration, sum = 0, 0
-        end
-    end)
-
 end
 
 ---обмен
@@ -220,9 +129,12 @@ local function showShopBuyUI(player, entity)
                             local gridOfEquipment = item.grid.get_contents()
                             local equipmentPrice = 0;
                             for equipmentName, count in pairs(gridOfEquipment) do
-                                equipmentPrice = equipmentPrice + global.economy.prices[equipmentName] * count
+                                equipmentPrice = equipmentPrice +
+                                                     global.economy.prices[equipmentName] *
+                                                     count
                             end
-                            shopInventory[item.name .. separator .. itemsWithEquipment] = {
+                            shopInventory[item.name .. separator ..
+                                itemsWithEquipment] = {
                                 name = item.name,
                                 price = price + equipmentPrice,
                                 equipment = gridOfEquipment
@@ -230,7 +142,8 @@ local function showShopBuyUI(player, entity)
                             itemsWithEquipment = itemsWithEquipment + 1
                         else
                             if shopInventory[item.name] then
-                                shopInventory[item.name].count = shopInventory[item.name].count + item.count
+                                shopInventory[item.name].count =
+                                    shopInventory[item.name].count + item.count
                             else
                                 shopInventory[item.name] = {
                                     name = item.name,
@@ -309,11 +222,17 @@ local function showShopBuyUI(player, entity)
                     style = "filter_slot_table"
                 }
                 for key, item in pairs(shopInventory) do
-                    local buttonStyle = (key == selectedItem) and "yellow_slot_button" or "recipe_slot_button"
+                    local buttonStyle = (key == selectedItem) and
+                                            "yellow_slot_button" or
+                                            "recipe_slot_button"
                     local equipment = ""
                     if item.equipment ~= nil then
                         for equipmentName, count in pairs(item.equipment) do
-                            equipment = { "", equipment, "\n", { "equipment-name." .. equipmentName }, ": ", count }
+                            equipment = {
+                                "", equipment, "\n",
+                                {"equipment-name." .. equipmentName}, ": ",
+                                count
+                            }
                         end
                     end
                     local btn = button_table.add {
@@ -324,8 +243,11 @@ local function showShopBuyUI(player, entity)
                             action = prefix .. "-select_item_for_buy",
                             itemName = key
                         },
-                        tooltip = { "", { "item-name." .. item.name }, '\nСтоимость: ', item.price, ' €$',
-                            equipment }
+                        tooltip = {
+                            "", {"item-name." .. item.name},
+                            '\nСтоимость: ', item.price, ' €$',
+                            equipment
+                        }
                     }
                     if isHasEquipment(key) then
                         btn.tags.equipment = item.equipment
@@ -339,9 +261,7 @@ local function showShopBuyUI(player, entity)
 
             local function drawOrderController()
 
-                if buyControl ~= nil then
-                    buyControl.clear()
-                end
+                if buyControl ~= nil then buyControl.clear() end
                 local selectedItem = options.selectedItem or ''
 
                 if selectedItem == '' then
@@ -354,7 +274,9 @@ local function showShopBuyUI(player, entity)
                     style = 'recipe_slot_button'
                 }
                 if selectedItem ~= '' then
-                    buyControl['selectedItem'].sprite = "item/" .. shopInventory[selectedItem].name
+                    buyControl['selectedItem'].sprite = "item/" ..
+                                                            shopInventory[selectedItem]
+                                                                .name
                 end
 
                 local controls_slider = buyControl.add {
@@ -362,10 +284,13 @@ local function showShopBuyUI(player, entity)
                     name = prefix .. "-controls_slider",
                     value = math.min(options.count or 1),
                     minimum_value = 0,
-                    maximum_value = selectedItem ~= '' and shopInventory[selectedItem].count or 1,
+                    maximum_value = selectedItem ~= '' and
+                        shopInventory[selectedItem].count or 1,
                     style = "notched_slider"
                 }
-                controls_slider.enabled = selectedItem ~= '' and shopInventory[selectedItem].count or 1 > 1
+                controls_slider.enabled =
+                    selectedItem ~= '' and shopInventory[selectedItem].count or
+                        1 > 1
 
                 local controls_textfield = buyControl.add {
                     type = "textfield",
@@ -377,7 +302,9 @@ local function showShopBuyUI(player, entity)
                     style = prefix .. "-controls-textfield"
                 }
 
-                controls_textfield.enabled = selectedItem ~= '' and shopInventory[selectedItem].count or 1 > 1
+                controls_textfield.enabled =
+                    selectedItem ~= '' and shopInventory[selectedItem].count or
+                        1 > 1
 
                 buyControl.add({
                     type = 'button',
@@ -387,22 +314,27 @@ local function showShopBuyUI(player, entity)
                     enabled = selectedItem ~= '' and options.count > 0
                 })
 
-                script.on_event(defines.events.on_gui_value_changed, function(event)
+                script.on_event(defines.events.on_gui_value_changed,
+                                function(event)
                     if event.element.name == prefix .. "-controls_slider" then
-                        controls_textfield.text = tostring(event.element.slider_value)
+                        controls_textfield.text =
+                            tostring(event.element.slider_value)
                     end
                 end)
 
-                script.on_event(defines.events.on_gui_text_changed, function(event)
+                script.on_event(defines.events.on_gui_text_changed,
+                                function(event)
                     if event.element.name == prefix .. "-controls_textfield" then
-                        local value =
-                        math.min(tonumber(event.element.text) or 0, shopInventory[selectedItem].count or 1)
+                        local value = math.min(
+                                          tonumber(event.element.text) or 0,
+                                          shopInventory[selectedItem].count or 1)
                         controls_slider.slider_value = value
                         controls_textfield.text = tostring(value)
                     end
                 end)
 
-                script.on_event(defines.events.on_player_main_inventory_changed, function(event)
+                script.on_event(defines.events.on_player_main_inventory_changed,
+                                function(event)
                     if player_gui['shop-gui'] ~= nil then
                         drawShopGUI()
                     end
@@ -413,13 +345,10 @@ local function showShopBuyUI(player, entity)
             drawOrderController()
             player.opened = gui
 
-
             -- player.print(serpent.dump(shopInventory))
             script.on_event(defines.events.on_gui_click, function(event)
                 local element = event.element
-                if not element.valid then
-                    return
-                end
+                if not element.valid then return end
                 if element.tags.action == prefix .. "-select_item_for_buy" then
                     local selectedItem = element.tags.itemName
                     -- player[prefix]['shop-buy'].selectedItem = selectedItem
@@ -445,14 +374,11 @@ end
 
 local function shopGUI()
     script.on_event(defines.events.on_gui_opened, function(event)
-        if event.entity == nil then
-            return
-        end
+        if event.entity == nil then return end
+        -- тут добавить проверку что фракция не соответствует игроку, тогда показываем магазин иначе склад!
         if event.entity.name == 'shop-buy' then
             local player = game.players[event.player_index]
-            if not player or not player.valid then
-                return
-            end
+            if not player or not player.valid then return end
             showShopBuyUI(player, event.entity)
         end
     end)
@@ -466,19 +392,23 @@ local function shopGUI()
     end)
 end
 
-function initModuleEconomy(player)
+function initModuleEconomy()
     global.economy = {
         balances = {},
         prices = {}
     }
-    -- для работы с интерфейсами
-
-    initPrices(player)
+    initPrices(teams.store.forces.getDefault())
     -- global.economy.balances[player.force.index] = {coins = 0}
-    global.economy.balances[player.name] = {
+
+    -- shopGUI()
+end
+
+script.on_event(defines.events.on_player_joined_game, function(event)
+    local player = getPlayerById(event.player_index)
+    logger('Игрок ' .. player.name ..
+               ' присоединился к игре')
+    if global.economy.balances[event.player_index] ~= nil then return end
+    global.economy.balances[event.player_index] = {
         coins = 0
     }
-
-    salary(player)
-    shopGUI()
-end
+end)
