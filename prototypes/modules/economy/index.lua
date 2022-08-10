@@ -397,7 +397,3 @@ script.on_event(defines.events.on_player_joined_game, function(event)
         coins = 0
     }
 end)
-
--- script.on_event(_, function(event)
-    
--- end)
