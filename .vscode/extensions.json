@@ -1,13 +1,11 @@
 {
     "recommendations": [
         "svizzini.factorio-lua-api-autocomplete",
-        "mikestead.dotenv",
-        "alefragnani.bookmarks",
-        "mhutchie.git-graph",
-        "oderwat.indent-rainbow",
-        "yinfei.luahelper",
-        "chakrounanas.turbo-console-log",
+        "operali.lua-booster",
         "vscode-icons-team.vscode-icons",
-        "grimmer.vscode-back-forward-button"
+        "grimmer.vscode-back-forward-button",
+        "alefragnani.bookmarks",
+        "kisstkondoros.vscode-codemetrics",
+        "mhutchie.git-graph",
     ]
 }
