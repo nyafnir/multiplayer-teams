@@ -2,7 +2,7 @@ local this = {}
 
 -- Шаг для архимеда
 
-function this.get()
+function this.current()
     if global.step == nil then
         global.step = spawns.config.archimedeanSpiral.step * 2
     end
@@ -11,10 +11,8 @@ function this.get()
 end
 
 function this.next()
-    local step = this.get()
-    step = step + spawns.config.archimedeanSpiral.step
-    global.step = step
-    return step
+    global.step = this.current() + spawns.config.archimedeanSpiral.step
+    return global.step
 end
 
 return this

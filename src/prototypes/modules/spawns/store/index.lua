@@ -1,3 +1,3 @@
 return {
-    steps = require('prototypes.modules.spawns.store.steps.index')
+    step = require('prototypes.modules.spawns.store.step')
 }

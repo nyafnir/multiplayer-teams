@@ -1,17 +1,28 @@
 return {
+    --- Вкл / выкл модуль
     enable = getConfig('spawns:enable'),
-    respawn = {
-        timeout = {
-            minutes = getConfig('spawns:respawn-timeout'),
-            ticks = convertMinutesToTicks(getConfig('spawns:respawn-timeout'))
-        }
-    },
+    --- Архимедова спираль для генерации точек для новых баз
     archimedeanSpiral = {
-        distance = getConfig('spawns:archimedean-spiral:distance'),
-        step = getConfig('spawns:archimedean-spiral:step')
+        step = getConfig('spawns:archimedean-spiral:step'),
+        distance = getConfig('spawns:archimedean-spiral:distance')
     },
-    base = {
-        internalRadius = getConfig('spawns:base:internal-radius'),
-        externalRadius = getConfig('spawns:base:external-radius')
+    --- Настройки базы
+    options = {
+        radius = {
+            near = getConfig('spawns:options:radius:near'),
+            far = getConfig('spawns:options:radius:far')
+        },
+        --- Смена расположения своей базы
+        respawn = {
+            --- время в течение которого можно поменять место
+            timeout = {
+                minutes = getConfig('spawns:options:respawn:timeout'),
+                ticks = convertMinutesToTicks(
+                    getConfig('spawns:options:respawn:timeout'))
+            }
+        },
+        --- Добавление ресурсов вокруг базы:
+        --- - дубликаты являются отдельными месторождениями
+        resources = getConfig('spawns:options:resources')
     }
 }

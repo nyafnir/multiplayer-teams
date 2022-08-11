@@ -14,7 +14,6 @@ local function start()
 
     teams.start()
     relations.start()
-    spawns.start()
     gui.start()
 
     return true
@@ -25,15 +24,19 @@ script.on_init(function()
     if not start() then
         return
     end
+
+    spawns.on_init()
 end)
 
 --- [Событие] Происходит после загрузки и сохранения
 script.on_load(function()
-    -- И помните! "on_load() никогда не должен изменять `global`!"
-
     if not start() then
         return
     end
+
+    --- И помните! "on_load() никогда не должен изменять `global`!"
+
+    spawns.on_load()
 end)
 
 -- TODO: move to module: `economy.start()`
