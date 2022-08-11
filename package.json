@@ -9,16 +9,19 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "prebuild": "npm ci",
     "build": "node --experimental-json-modules ."
   },
   "keywords": [
     "factorio",
+    "mod",
     "teams",
+    "relations",
+    "spawns",
     "economy",
-    "mod"
+    "trades",
+    "orders"
   ],
-  "license": "ISC",
+  "license": "UNLICENSE",
   "dependencies": {
     "adm-zip": "^0.5.9",
     "dotenv": "^16.0.0",
