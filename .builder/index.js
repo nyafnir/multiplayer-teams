@@ -14,17 +14,25 @@ class FactorioModBuilder {
 
     #src = '../';
 
-    async _closeFactorio() {
+    async _getFactorioPid() {
         const list = await psList();
-
         const factorio = list.find((process) => process.name === 'factorio.exe');
-        if (factorio) {
-            console.info(`[${context}] Игре отправлен сигнал к закрытию...`);
-            process.kill(factorio.pid, 'SIGKILL');
-            return true;
+        return factorio?.pid;
+    }
+
+    async _closeFactorio() {
+        const pid = await this._getFactorioPid()
+        if (!pid) {
+            return false;
         }
 
-        return false;
+        console.info(`[${this.#context}] Игре отправлен сигнал к закрытию...`);
+        try {
+            process.kill(pid, 'SIGKILL');
+        } catch (cause) {
+            console.debug(`При закрытии получена ошибка: ${cause}`);
+        }
+        return true;
     }
 
     _updateInfo(pathToInfoFile = this.#src + 'info.json') {
@@ -77,21 +85,22 @@ class FactorioModBuilder {
     }
 
     _createZipArchive(modName, version) {
-        const fileName = `${modName}_${version}.zip`;
+        const fileName = `${modName}_${version}`
+        const fileNameWithExt = `${fileName}.zip`;
 
-        this.#zipService.addLocalFolder(this.#src + 'locale');
-        this.#zipService.addLocalFolder(this.#src + 'prototypes');
-        this.#zipService.addLocalFile(this.#src + 'changelog.txt');
-        this.#zipService.addLocalFile(this.#src + 'control.lua');
-        this.#zipService.addLocalFile(this.#src + 'data.lua');
-        this.#zipService.addLocalFile(this.#src + 'info.json');
-        this.#zipService.addLocalFile(this.#src + 'LICENSE');
-        this.#zipService.addLocalFile(this.#src + 'settings.lua');
-        this.#zipService.addLocalFile(this.#src + 'thumbnail.png');
+        this.#zipService.addLocalFolder(this.#src + 'locale', fileName + '/' + 'locale');
+        this.#zipService.addLocalFolder(this.#src + 'prototypes', fileName + '/' + 'prototypes');
+        this.#zipService.addLocalFile(this.#src + 'changelog.txt', fileName + '/');
+        this.#zipService.addLocalFile(this.#src + 'control.lua', fileName + '/');
+        this.#zipService.addLocalFile(this.#src + 'data.lua', fileName + '/');
+        this.#zipService.addLocalFile(this.#src + 'info.json', fileName + '/');
+        this.#zipService.addLocalFile(this.#src + 'LICENSE', fileName + '/');
+        this.#zipService.addLocalFile(this.#src + 'settings.lua', fileName + '/');
+        this.#zipService.addLocalFile(this.#src + 'thumbnail.png', fileName + '/');
 
-        this.#zipService.writeZip(`${this.#pathToMods}\\${fileName}`);
+        this.#zipService.writeZip(`${this.#pathToMods}\\${fileNameWithExt}`);
 
-        console.info(`[${this.#context}] Мод запакован в "${fileName}" и перемещён в папку игры.`);
+        console.info(`[${this.#context}] Мод запакован в "${fileNameWithExt}" и перемещён в папку игры.`);
     }
 
     _changeStatus(modName, status = true, pathToModListFile = this.#pathToModListFile) {
@@ -109,11 +118,12 @@ class FactorioModBuilder {
         }
     }
 
-    async _startFactorio() {
-        const result = await this._closeFactorio();
-        if (result) {
-            console.info(`[${this.#context}] При попытке запуска обнаружилось, что игра уже открыта, поэтому повторно отправляю сигнал закрытия через секунду...`);
-            await new Promise(resolve => setTimeout(() => resolve(), 1000));
+
+    async _startFactorio(waitSeconds = 3) {
+        const hasOpenFactorio = await this._getFactorioPid()
+        if (hasOpenFactorio) {
+            console.info(`[${this.#context}] При попытке запуска обнаружилось, что игра уже открыта, поэтому жду ${waitSeconds} сек...`);
+            await new Promise(resolve => setTimeout(() => resolve(), waitSeconds * 1000));
             return await this._startFactorio();
         }
 
@@ -126,7 +136,7 @@ class FactorioModBuilder {
         const info = this._updateInfo();
         await this._remove(info.name);
         this._createZipArchive(info.name, info.version);
-        this._changeStatus(info.name, modStatus);
+        this._changeStatus(info.name, true);
         await this._startFactorio();
     }
 }
