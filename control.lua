@@ -1,31 +1,42 @@
 require('prototypes.modules.utils.index')
-
+require('prototypes.modules.economy.index')
 teams = require('prototypes.modules.teams.index')
-spawns = require('prototypes.modules.spawns.index')
-relations = require('prototypes.modules.relations.index') -- После `teams`
--- economy = require('prototypes.modules.economy.index') -- После `teams`
-
---- Последний, так как собирается из остальных модулей
+relations = require('prototypes.modules.relations.index') -- Строго после `teams`
 local gui = require('prototypes.gui.index')
+
+--- init в обоих случаях: инициализация карты и загрузка/сохранение
+local function start()
+    --- Если это игровая компания, то не запускать мод
+    if script.level.campaign_name ~= nil then
+        return false
+    end
+
+    teams.start()
+    relations.start()
+    gui.start()
+
+    return true
+end
 
 --- [Событие] Происходит после создания карты с включенным модом
 script.on_init(function()
-    if not game.is_multiplayer() then return end
-
-    teams.on_init()
-    spawns.on_init()
-    relations.on_init()
-
-    gui.on_init()
+    if not start() then
+        return
+    end
 end)
 
 --- [Событие] Происходит после загрузки и сохранения
 script.on_load(function()
-    --- И помните! "on_load() никогда не должен изменять `global`!"
+    -- И помните! "on_load() никогда не должен изменять `global`!"
 
-    teams.on_load()
-    spawns.on_load()
-    relations.on_load()
+    if not start() then
+        return
+    end
+end)
 
-    gui.on_load()
+-- TODO: move to module: `economy.start()`
+script.on_event(defines.events.on_player_joined_game, function(event)
+    local player = getPlayerById(event.player_index)
+    logger('Игрок ' .. player.name .. ' присоединился к игре')
+    initModuleEconomy(player)
 end)

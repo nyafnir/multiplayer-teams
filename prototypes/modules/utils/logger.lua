@@ -1,8 +1,12 @@
 --- Вывести сообщение в чат (вывод отключается через настройки)
 function logger(text)
-    if getConfig('logger:enable') ~= true then return end
+    if getConfig('logger:enable') ~= true then
+        return
+    end
 
-    if text == nil then text = 'nil' end
+    if text == nil then
+        text = 'nil'
+    end
 
     local record = getConfig('logger:prefix') .. ' ' .. serpent.block(text)
 
@@ -16,4 +20,6 @@ function logger(text)
     return text
 end
 
-function tableToString(table) return serpent.block(table) end
+function tableToString(table)
+    return serpent.block(table)
+end

@@ -1,12 +1,15 @@
 function isEqualRGBAColors(color1, color2)
-    return color1.r == color2.r and color1.g == color2.g and color1.b ==
-               color2.b and color1.a == color2.a
+    return color1.r == color2.r and color1.g == color2.g and color1.b == color2.b and color1.a == color2.a
 end
 
 function convertHexToRGBA(hex, alpha)
-    if alpha == nil then alpha = 1 end
+    if alpha == nil then
+        alpha = 1
+    end
 
-    if string.sub(hex, 1, 1) == '#' then hex = string.gsub(hex, '#', '') end
+    if string.sub(hex, 1, 1) == '#' then
+        hex = string.gsub(hex, '#', '')
+    end
 
     local r = tonumber(string.sub(hex, 1, 2)) / 255
     local g = tonumber(string.sub(hex, 3, 4)) / 255
@@ -21,8 +24,7 @@ function convertHexToRGBA(hex, alpha)
 end
 
 function convertRGBToHex(color)
-    return '#' .. math.floor(color.r * 255) .. math.floor(color.g * 255) ..
-               math.floor(color.b * 255)
+    return '#' .. math.floor(color.r * 255) .. math.floor(color.g * 255) .. math.floor(color.b * 255)
 end
 
 -- Стандартные цвета которые доступны по всему проекту

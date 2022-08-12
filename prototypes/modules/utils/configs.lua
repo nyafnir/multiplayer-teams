@@ -1,6 +1,8 @@
 local prefix = 'multiplayer-teams:'
 
-function getConfigFullName(name) return prefix .. name end
+function getConfigFullName(name)
+    return prefix .. name
+end
 
 --- Получение значения настройки (`name` без префикса)
 --- Всегда возвращает строку
@@ -15,10 +17,14 @@ function getConfig(name)
     -- end
 
     local startup = settings.startup[getConfigFullName(name)]
-    if startup ~= nil then return startup.value end
+    if startup ~= nil then
+        return startup.value
+    end
 
     local runtime_global = settings.global[getConfigFullName(name)]
-    if runtime_global ~= nil then return runtime_global.value end
+    if runtime_global ~= nil then
+        return runtime_global.value
+    end
 
     return nil
 end

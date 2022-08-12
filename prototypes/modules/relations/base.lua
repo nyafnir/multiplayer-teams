@@ -32,7 +32,7 @@ function this.getList(forceFrom)
     return {
         friends = table.concat(result.friends, ', '),
         enemies = table.concat(result.enemies, ', '),
-        neutrals = table.concat(result.neutrals, ', ')
+        neutrals = table.concat(result.neutrals, ', '),
     }
 end
 
@@ -58,8 +58,12 @@ function this.setOffer(forceFromName, forceToName, ownerToId)
     relations.store.offers.set(forceFromName, forceToName, ownerToId)
 end
 
-function this.getOffer(ownerToId) relations.store.offers.get(ownerToId) end
+function this.getOffer(ownerToId)
+    relations.store.offers.get(ownerToId)
+end
 
-function this.removeOffer(ownerToId) relations.store.offers.remove(ownerToId) end
+function this.removeOffer(ownerToId)
+    relations.store.offers.remove(ownerToId)
+end
 
 return this
