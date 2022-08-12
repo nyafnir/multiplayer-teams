@@ -1,4 +1,4 @@
-local order = 'd'
+local prefix = 3
 
 -- Пояснения к настройкам в ./config.lua
 
@@ -8,7 +8,7 @@ data:extend({
         name = 'multiplayer-teams:spawns:enable',
         setting_type = 'startup',
         default_value = true,
-        order = order .. '-spawns-a'
+        order = prefix .. '-spawns-1'
     }
 })
 
@@ -19,7 +19,7 @@ data:extend({
         setting_type = 'startup',
         default_value = 2,
         minimum_value = 1,
-        order = order .. '-spawns-c',
+        order = prefix .. '-spawns-2-1',
         hidden = true
     }, {
         type = 'int-setting',
@@ -27,7 +27,7 @@ data:extend({
         setting_type = 'startup',
         default_value = 50,
         minimum_value = 1,
-        order = order .. '-spawns-d',
+        order = prefix .. '-spawns-2-2',
         hidden = true
     }
 })
@@ -39,7 +39,7 @@ data:extend({
         setting_type = 'startup',
         default_value = 150,
         minimum_value = 50,
-        order = order .. '-spawns-n',
+        order = prefix .. '-spawns-3-1',
         hidden = false
     }, {
         type = 'int-setting',
@@ -47,7 +47,7 @@ data:extend({
         setting_type = 'startup',
         default_value = 300,
         minimum_value = 50,
-        order = order .. '-spawns-f',
+        order = prefix .. '-spawns-3-2',
         hidden = false
     }
 })
@@ -60,7 +60,7 @@ data:extend({
         default_value = 10, -- минуты
         minimum_value = 5,
         maximum_value = 60,
-        order = order .. '-spawns-b'
+        order = prefix .. '-spawns-4'
     }
 })
 
@@ -69,7 +69,7 @@ data:extend({
         type = 'string-setting',
         name = 'multiplayer-teams:spawns:options:resources',
         setting_type = 'startup',
-        order = order .. '-spawns-z',
+        order = prefix .. '-spawns-99',
         hidden = false,
         default_value = [[{
             --- железо
