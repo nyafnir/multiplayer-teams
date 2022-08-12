@@ -1,9 +1,7 @@
 local this = {}
 
 local function init()
-    if getSize(global.teams) > 0 then
-        return
-    end
+    if getSize(global.teams) > 0 then return end
 
     global.teams = {}
 
@@ -15,9 +13,8 @@ local function init()
     --- Если модуль не был инициализирован в начале, то он возьмёт данные по командам игроков из игры
     for forceName, force in pairs(teams.store.forces.getAll()) do
         --- Команды по умолчанию пропускаем
-        if forceName == 'player' or forceName == 'enemy' or forceName == 'neutral' then
-            goto continue
-        end
+        if forceName == 'player' or forceName == 'enemy' or forceName ==
+            'neutral' then goto continue end
         --- Такая команда есть в нашем модуле?
         if this.getByName(forceName) == nil then
             --- тогда добавляем
@@ -65,15 +62,11 @@ function this.remove(name)
     this.getAll()[name] = nil
 end
 
-function this.getByName(name)
-    return this.getAll()[name]
-end
+function this.getByName(name) return this.getAll()[name] end
 
 function this.getByTitle(title)
     for _, team in pairs(this.getAll()) do
-        if team.title == title then
-            return team
-        end
+        if team.title == title then return team end
     end
 
     return nil
