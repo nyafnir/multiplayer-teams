@@ -10,7 +10,7 @@ local gui = require('prototypes.gui.index')
 
 --- [Событие] Происходит после создания карты с включенным модом
 script.on_init(function()
-    if not script.is_multiplayer() then return end
+    if not game.is_multiplayer() then return end
 
     teams.on_init()
     spawns.on_init()
@@ -21,8 +21,6 @@ end)
 
 --- [Событие] Происходит после загрузки и сохранения
 script.on_load(function()
-    if not script.is_multiplayer() then return end
-
     --- И помните! "on_load() никогда не должен изменять `global`!"
 
     teams.on_load()
