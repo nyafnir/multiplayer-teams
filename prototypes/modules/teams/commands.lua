@@ -9,9 +9,7 @@ local function getForceAndPlayerFromParameter(str)
     }
 
     logger('Got string: ' .. tostring(str))
-    if str == nil or str == ' ' then
-        return result
-    end
+    if str == nil or str == ' ' then return result end
 
     --[[
             1. Делим строку на слова по пробелу
@@ -46,9 +44,7 @@ local function getForceAndPlayerFromParameter(str)
         end
     end
 
-    if nickname ~= '' then
-        result.player = getPlayerByName(nickname)
-    end
+    if nickname ~= '' then result.player = getPlayerByName(nickname) end
 
     -- SUGG-1: Алгоритм можно расширить сделав перебор до
     -- момента нахождения обоих параметров и команды и игрока:
@@ -83,9 +79,7 @@ function this.create(command)
     local title = command.parameter
 
     --- Проверка, что название указано
-    if title == nil then
-        title = owner.name
-    end
+    if title == nil then title = owner.name end
 
     --- Проверка, что состоит в команде по умолчанию
     if owner.force.index ~= teams.store.forces.getDefault().index then
@@ -98,7 +92,8 @@ function this.create(command)
     end
 
     --- Проверка, что название команды не занято и имя для force свободно
-    if teams.store.forces.get(title) ~= nil or teams.store.teams.getByTitle(title) ~= nil then
+    if teams.store.forces.get(title) ~= nil or
+        teams.store.teams.getByTitle(title) ~= nil then
         return owner.print({'teams:error.title-already-used'}, colors.red)
     end
 
@@ -130,7 +125,8 @@ function this.setName(command)
 
     --- Редактируем и сообщаем всем об изменении
     team = teams.base.editTitle(team, newTitle)
-    return game.print({'teams:result.edit-name', oldTitle, newTitle}, team.color)
+    return
+        game.print({'teams:result.edit-name', oldTitle, newTitle}, team.color)
 end
 
 function this.setColor(command)
@@ -176,7 +172,8 @@ function this.inviteSend(command)
 
     --- Проверка, что приглашения у игрока на рассмотрении нет
     if teams.store.invites.get(player.index) ~= nil then
-        return owner.print({'teams:error.already-have-invite', timeout}, colors.yellow)
+        return owner.print({'teams:error.already-have-invite', timeout},
+                           colors.yellow)
     end
 
     teams.store.invites.set(owner.force.name, player.index)
@@ -201,7 +198,8 @@ function this.inviteAccept(command)
     teams.base.change(player, force)
 
     local team = teams.store.teams.getByName(forceName)
-    game.print({'teams:event.invite-accepted', player.name, team.title}, team.color)
+    game.print({'teams:event.invite-accepted', player.name, team.title},
+               team.color)
 end
 
 function this.inviteCancel(command)
@@ -217,7 +215,8 @@ function this.inviteCancel(command)
     teams.store.invites.remove(player.index)
 
     local team = teams.store.teams.getByName(forceName)
-    game.print({'teams:event.invite-canceled', player.name, team.title}, team.color)
+    game.print({'teams:event.invite-canceled', player.name, team.title},
+               team.color)
 end
 
 function this.kick(command)
@@ -281,7 +280,9 @@ function this.change(command)
 
     teams.base.change(params.player, params.force)
 
-    return game.print({'teams:result.change', params.player.name, oldTitle, params.team.title}, params.team.color)
+    return game.print({
+        'teams:result.change', params.player.name, oldTitle, params.team.title
+    }, params.team.color)
 end
 
 function this.remove(command)
@@ -323,24 +324,31 @@ function this.leave(command)
     game.print({'teams:result.leave', player.name, oldTitle}, oldColor)
 end
 
-function this.addCmds()
+function this.init()
     -- Если консольной команды "информации о команде" нет, значит и других нет, тогда загружаем их
-    if commands.commands['team'] ~= nil then
-        return
-    end
+    if commands.commands['team'] ~= nil then return end
 
     commands.add_command('team', {'teams:help.info'}, teams.commands.info)
     commands.add_command('teams', {'teams:help.list'}, teams.commands.list)
-    commands.add_command('team-create', {'teams:help.create'}, teams.commands.create)
-    commands.add_command('team-name', {'teams:help.edit-name'}, teams.commands.setName)
-    commands.add_command('team-color', {'teams:help.edit-color'}, teams.commands.setColor)
-    commands.add_command('team-invite', {'teams:help.invite-send'}, teams.commands.inviteSend)
-    commands.add_command('team-invite-accept', {'teams:help.invite-accept'}, teams.commands.inviteAccept)
-    commands.add_command('team-invite-cancel', {'teams:help.invite-cancel'}, teams.commands.inviteCancel)
+    commands.add_command('team-create', {'teams:help.create'},
+                         teams.commands.create)
+    commands.add_command('team-name', {'teams:help.edit-name'},
+                         teams.commands.setName)
+    commands.add_command('team-color', {'teams:help.edit-color'},
+                         teams.commands.setColor)
+    commands.add_command('team-invite', {'teams:help.invite-send'},
+                         teams.commands.inviteSend)
+    commands.add_command('team-invite-accept', {'teams:help.invite-accept'},
+                         teams.commands.inviteAccept)
+    commands.add_command('team-invite-cancel', {'teams:help.invite-cancel'},
+                         teams.commands.inviteCancel)
     commands.add_command('team-kick', {'teams:help.kick'}, teams.commands.kick)
-    commands.add_command('team-change', {'teams:help.change'}, teams.commands.change)
-    commands.add_command('team-remove', {'teams:help.remove'}, teams.commands.remove)
-    commands.add_command('team-leave', {'teams:help.leave'}, teams.commands.leave)
+    commands.add_command('team-change', {'teams:help.change'},
+                         teams.commands.change)
+    commands.add_command('team-remove', {'teams:help.remove'},
+                         teams.commands.remove)
+    commands.add_command('team-leave', {'teams:help.leave'},
+                         teams.commands.leave)
 end
 
 return this

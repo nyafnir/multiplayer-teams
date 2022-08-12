@@ -2,13 +2,9 @@ local this = {
     _vault = {}
 }
 
-function this.getAll()
-    return this._vault
-end
+function this.getAll() return this._vault end
 
-function this.get(ownerToId)
-    return this._vault[ownerToId]
-end
+function this.get(ownerToId) return this._vault[ownerToId] end
 
 function this.set(forceFromName, forceToName, ownerToId, relation)
 
@@ -24,9 +20,7 @@ function this.set(forceFromName, forceToName, ownerToId, relation)
     return obj
 end
 
-function this.remove(ownerToId)
-    this._vault[ownerToId] = nil
-end
+function this.remove(ownerToId) this._vault[ownerToId] = nil end
 
 function this.removeByForceName(forceName)
     for ownerToId, obj in pairs(this.getAll()) do
