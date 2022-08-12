@@ -1,11 +1,8 @@
 {
-  "name": "multiplayer-teams",
-  "version": "0.6.2",
-  "title": "MultiplayerTeams",
+  "name": "factorio-mod-builder",
+  "version": "1.6.5",
   "description": "Мод для игры Factorio, который расширяет возможности совместной игры. Добавляет разделение игроков на независимые команды, систему отношений между ними и торговлю.",
-  "homepage": "https://github.com/nyafnir/multiplayer-teams",
-  "contact": "https://discord.gg/mJV6yjjpHk",
-  "author": "LightLevel",
+  "author": "nyafnir",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -14,17 +11,12 @@
   "keywords": [
     "factorio",
     "mod",
-    "teams",
-    "relations",
-    "spawns",
-    "economy",
-    "trades",
-    "orders"
+    "builder",
+    "build"
   ],
   "license": "UNLICENSE",
   "dependencies": {
     "adm-zip": "^0.5.9",
-    "dotenv": "^16.0.0",
     "open": "^8.4.0",
     "ps-list": "^8.1.0"
   }
