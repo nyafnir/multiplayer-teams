@@ -1,7 +1,7 @@
 {
   "name": "factorio-mod-builder",
   "version": "1.6.5",
-  "description": "Мод для игры Factorio, который расширяет возможности совместной игры. Добавляет разделение игроков на независимые команды, систему отношений между ними и торговлю.",
+  "description": "Упаковщик мода для игры Factorio.",
   "author": "nyafnir",
   "main": "index.js",
   "type": "module",
