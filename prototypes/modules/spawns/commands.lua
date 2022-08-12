@@ -11,8 +11,7 @@ function this.init()
     --- значит и других нет
     if commands.commands['respawn'] ~= nil then return end
 
-    commands.add_command('respawn', {'spawns:help.respawn'},
-                         spawns.submodules.commands.respawn)
+    commands.add_command('respawn', {'spawns:help.respawn'}, this.respawn)
 end
 
 --- Удаление консольных команд из общего списка
