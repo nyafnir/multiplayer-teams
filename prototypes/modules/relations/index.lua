@@ -6,11 +6,16 @@ local this = {
     commands = require('prototypes.modules.relations.commands')
 }
 
-function this.start()
+function this._on_any()
     if this.config.enable then
-        this.commands.addCmds()
-        script.on_event(defines.events.on_forces_merging, this.events.onRemovingForce)
+        this.commands.init()
+        script.on_event(defines.events.on_forces_merging,
+                        this.events.onRemovingForce)
     end
 end
+
+function this.on_init() this._on_any() end
+
+function this.on_load() this._on_any() end
 
 return this

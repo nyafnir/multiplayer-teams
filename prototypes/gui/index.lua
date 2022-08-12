@@ -1,13 +1,14 @@
 local this = {}
 
-function this.start()
+function this._on_any()
     script.on_event(defines.events.on_player_created, function(event)
         if getConfig('gui:enable') == true then
             this.addMainButton(getPlayerById(event.player_index))
         end
     end)
 
-    script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
+    script.on_event(defines.events.on_runtime_mod_setting_changed,
+                    function(event)
         if event.setting == 'multiplayer-teams:gui:enable' then
             if getConfig('gui:enable') == true then
                 this.addMainButtons()
@@ -18,10 +19,12 @@ function this.start()
     end)
 end
 
+function this.on_init() this._on_any() end
+
+function this.on_load() this._on_any() end
+
 function this.addMainButton(player)
-    if player.gui.top.mod_button ~= nil then
-        return
-    end
+    if player.gui.top.mod_button ~= nil then return end
 
     --- https://lua-api.factorio.com/latest/LuaGuiElement.html
     player.gui.top.add({
@@ -34,7 +37,7 @@ function this.addMainButton(player)
         visible = true,
         ignored_by_interaction = false, -- Запретить взаимодествие
         tags = {}, --- {a = 1, b = true, c = "three", d = {e = "f"}}
-        index = nil, --- Место в родительском элементе, в которое должен 
+        index = nil, --- Место в родительском элементе, в которое должен
         --- вставляться дочерний элемент. По умолчанию дочерний элемент
         --- будет добавлен в конец.
         anchor = nil --- Где разместить дочерний элемент в относительном элементе.
@@ -42,9 +45,7 @@ function this.addMainButton(player)
 end
 
 function this.addMainButtons()
-    for _, player in pairs(game.players) do
-        this.addMainButton(player)
-    end
+    for _, player in pairs(game.players) do this.addMainButton(player) end
 end
 
 function this.removeMainButtons()

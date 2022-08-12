@@ -6,12 +6,18 @@ local this = {
     commands = require('prototypes.modules.teams.commands')
 }
 
-function this.start()
-    if getConfig('teams:enable') == true then
-        this.commands.addCmds()
-        script.on_event(defines.events.on_player_created, this.events.onJoinNewPlayer)
-        script.on_event(defines.events.on_forces_merging, this.events.onRemovingForce)
+function this._on_any()
+    if this.config.enable then
+        this.commands.init()
+        script.on_event(defines.events.on_player_created,
+                        this.events.onJoinNewPlayer)
+        script.on_event(defines.events.on_forces_merging,
+                        this.events.onRemovingForce)
     end
 end
+
+function this.on_init() this._on_any() end
+
+function this.on_load() this._on_any() end
 
 return this
