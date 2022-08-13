@@ -10,8 +10,6 @@ local gui = require('prototypes.gui.index')
 
 --- [Событие] Происходит после создания карты с включенным модом
 script.on_init(function()
-    if not game.is_multiplayer() then return end
-
     teams.on_init()
     spawns.on_init()
     relations.on_init()
