@@ -405,8 +405,8 @@ end
 
 script.on_event(defines.events.on_player_joined_game, function(event)
     local player = getPlayerById(event.player_index)
-    logger('Игрок ' .. player.name ..
-               ' присоединился к игре')
+    logger.debug('Игрок ' .. player.name ..
+                     ' присоединился к игре')
     if global.economy.balances[event.player_index] ~= nil then return end
     global.economy.balances[event.player_index] = {
         coins = 0
