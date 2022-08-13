@@ -77,7 +77,7 @@ function this.callCleaners(surface, point, radius)
     --     logger.debug(decorativeResult)
     -- end
 
-    logger(
+    logger.debug(
         'Декорации воссозданы, чтобы убрать слизь от кусак')
     surface.regenerate_decorative()
 end
