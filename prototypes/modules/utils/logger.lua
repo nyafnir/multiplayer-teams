@@ -13,7 +13,7 @@ function this.chat(message)
     if message == nil then return message end
 
     --- game chat
-    if game then game.print(msg) end
+    if game then game.print(message) end
 
     return message
 end

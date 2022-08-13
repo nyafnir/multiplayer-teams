@@ -1,7 +1,5 @@
 require('prototypes.modules.utils.index')
 
-logger = require('prototypes.modules.utils.logger') -- После хэлперов
-
 teams = require('prototypes.modules.teams.index')
 spawns = require('prototypes.modules.spawns.index')
 relations = require('prototypes.modules.relations.index') -- После `teams`
