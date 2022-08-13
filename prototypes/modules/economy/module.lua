@@ -1,4 +1,9 @@
-local this = {}
+local this = {
+    config = {
+        ---@type boolean
+        enabled = configService.get('economy:enabled'),
+    },
+}
 
 local function on_any() end
 
