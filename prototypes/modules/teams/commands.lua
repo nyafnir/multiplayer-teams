@@ -8,7 +8,7 @@ local function getForceAndPlayerFromParameter(str)
         team = nil
     }
 
-    logger('Got string: ' .. tostring(str))
+    logger.debug('Got string: ' .. tostring(str))
     if str == nil or str == ' ' then return result end
 
     --[[

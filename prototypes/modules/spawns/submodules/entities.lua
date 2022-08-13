@@ -74,7 +74,7 @@ function this.callCleaners(surface, point, radius)
     -- })
 
     -- for _, decorativeResult in pairs(arrayDecorativeResult) do
-    --     logger(decorativeResult)
+    --     logger.debug(decorativeResult)
     -- end
 
     logger(

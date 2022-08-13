@@ -10,7 +10,7 @@ function this.respawn(surface, force)
     local spawnPoint = service.createSpawn(surface, force)
 
     --- Показываем на карте в режиме отладки
-    logger('[gps=' .. spawnPoint.x .. ',' .. spawnPoint.y .. ']')
+    logger.debug('[gps=' .. spawnPoint.x .. ',' .. spawnPoint.y .. ']')
 
     --- TODO: Выставляем таймер на сохранение местоположения
 

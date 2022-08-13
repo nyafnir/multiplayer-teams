@@ -1,5 +1,5 @@
-require('configs')
-require('logger')
+require('configs') -- первый, так как содержат настройки
 require('colors')
-require('game')
 require('helpers')
+logger = require('logger') -- после хэлперов
+require('game')

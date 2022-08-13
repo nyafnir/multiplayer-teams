@@ -154,7 +154,7 @@ function this.drawCircle(surface, entityName, amount, options)
 end
 
 function this.drawPointsInRadius(surface, fromPoint, entityName, count, perAmount, radius)
-    logger('drawPointsInRadius') -- TODO
+    logger.debug('drawPointsInRadius') -- TODO
 end
 
 return this

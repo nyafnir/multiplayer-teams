@@ -1,19 +1,69 @@
---- Вывести сообщение в чат (вывод отключается через настройки)
-function logger(text)
-    if getConfig('logger:enable') ~= true then return end
+local this = {
+    config = {
+        enable = getConfig('logger:enable'),
+        prefix = getConfig('logger:prefix')
+    }
+}
 
-    if text == nil then text = 'nil' end
+---Вывести сообщение в общий игровой чат.
+---Возвращает то, что принял.
+---@param message string
+---@return message
+function this.chat(message)
+    if message == nil then return message end
 
-    local record = getConfig('logger:prefix') .. ' ' .. serpent.block(text)
+    --- game chat
+    if game then game.print(msg) end
 
-    if game ~= nil then
-        game.print(record) -- chat
-    end
-
-    print(record) -- console
-    log(record) -- factorio-current.log
-
-    return text
+    return message
 end
 
-function tableToString(table) return serpent.block(table) end
+---Вывести сообщение в консоль.
+---Возвращает то, что принял.
+---@param message string
+---@return message
+function this.console(message)
+    if message == nil then return message end
+
+    --- console
+    print(message)
+
+    return message
+end
+
+---Вывести сообщение в лог-файл.
+---Возвращает то, что принял.
+---@param message string
+---@return message
+function this.file(message)
+    if message == nil then return message end
+
+    --- factorio-current.log
+    log(message)
+
+    return message
+end
+
+---Вывести сообщение во все места куда можно.
+---Возвращает то, что принял.
+---@param data any
+---@return data
+function this.log(data)
+    local message = this.config.prefix .. ' ' .. convertAnyToString(data)
+    this.chat(message)
+    this.console(message)
+    this.file(message)
+
+    return data
+end
+
+---Вывести сообщение с проверкой на включение режима отладки.
+---Возвращает то, что принял.
+---@param data any
+---@return data
+function this.debug(data)
+    if data == nil then return data end
+    if this.config.enable ~= true then return end
+
+    return this.log(data)
+end

@@ -12,16 +12,16 @@ function this.createSpawn(surface, force)
 
     --- Стартовая зона имеет радиус в 150 ед. по умолчанию
     local startingRadius = surface.get_starting_area_radius()
-    logger('Стартовая зона: ' .. startingRadius .. ' клеток')
+    logger.debug('Стартовая зона: ' .. startingRadius .. ' клеток')
 
     local aboveRadius = startingRadius / 2
-    logger('Рядом: ' .. aboveRadius .. ' клеток')
+    logger.debug('Рядом: ' .. aboveRadius .. ' клеток')
     local nearRadius = startingRadius + spawns.config.options.radius.near
-    logger('Недалеко: ' .. nearRadius .. ' клеток')
+    logger.debug('Недалеко: ' .. nearRadius .. ' клеток')
     local farRadius = nearRadius + spawns.config.options.radius.far
-    logger('Далеко: ' .. farRadius .. ' клеток')
+    logger.debug('Далеко: ' .. farRadius .. ' клеток')
     local awayRadius = farRadius * 2
-    logger('Очень далеко: ' .. awayRadius .. ' клеток')
+    logger.debug('Очень далеко: ' .. awayRadius .. ' клеток')
 
     --- Загрузка местоположения на карте для команды игроков
     --- Иначе мы не сможем ничего там менять
@@ -36,15 +36,15 @@ function this.createSpawn(surface, force)
     })
 
     
-    logger('Засыпка глубокой и обычной воды.')
+    logger.debug('Засыпка глубокой и обычной воды.')
     entities.killWater(surface, spawnPoint, aboveRadius)
-    logger('Уничтожение вражеских единиц.')
+    logger.debug('Уничтожение вражеских единиц.')
     entities.killBitters(surface, spawnPoint, farRadius)
-    logger('Удаление вражеской слизи.')
+    logger.debug('Удаление вражеской слизи.')
     entities.callCleaners(surface, spawnPoint, farRadius)
-    logger('Удаление ископаемых ресурсов.')
+    logger.debug('Удаление ископаемых ресурсов.')
     entities.removeResources(surface, spawnPoint, awayRadius)
-    logger('Генерация ископаемых ресурсов.')
+    logger.debug('Генерация ископаемых ресурсов.')
     -- entities.generateResources(surface, spawnPoint, aboveRadius, nearRadius, farRadius)
 
     return spawnPoint

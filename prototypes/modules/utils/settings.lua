@@ -19,7 +19,7 @@ data:extend({
         setting_type = 'startup',
         default_value = '[MultiplayerTeams]',
         order = prefix .. '-logger-2',
-        allow_blank = true,
+        allow_blank = false,
         auto_trim = true,
         hidden = false
     }

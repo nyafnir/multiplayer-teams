@@ -5,5 +5,10 @@
         "intermediate": true,
         "lua-check": false
     },
-    "rules": {}
+    "rules": {
+        "global_variable_upper_case": false,
+        "global variable": false,
+        "unresolved reference": false,
+        "space_around_BOP": false
+    }
 }
