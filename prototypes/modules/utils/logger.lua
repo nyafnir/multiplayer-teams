@@ -63,7 +63,9 @@ end
 ---@return data
 function this.debug(data)
     if data == nil then return data end
-    if this.config.enable ~= true then return end
+    if this.config.enable ~= true then return data end
 
     return this.log(data)
 end
+
+return this
