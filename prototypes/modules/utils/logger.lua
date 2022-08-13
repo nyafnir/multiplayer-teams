@@ -18,18 +18,7 @@ function this.chat(message)
     return message
 end
 
----Вывести сообщение в консоль.
----Возвращает то, что принял.
----@param message string
----@return message
-function this.console(message)
-    if message == nil then return message end
-
-    --- console
-    print(message)
-
-    return message
-end
+function this.all(message) return this.chat(message) end
 
 ---Вывести сообщение в лог-файл.
 ---Возвращает то, что принял.
@@ -51,7 +40,6 @@ end
 function this.log(data)
     local message = this.config.prefix .. ' ' .. convertAnyToString(data)
     this.chat(message)
-    this.console(message)
     this.file(message)
 
     return data
