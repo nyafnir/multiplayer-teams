@@ -1,6 +1,6 @@
 {
   "name": "factorio-mod-builder",
-  "version": "1.6.5",
+  "version": "1.0.0",
   "description": "Упаковщик мода для игры Factorio.",
   "author": "nyafnir",
   "main": "index.js",
@@ -11,8 +11,7 @@
   "keywords": [
     "factorio",
     "mod",
-    "builder",
-    "build"
+    "builder"
   ],
   "license": "UNLICENSE",
   "dependencies": {
