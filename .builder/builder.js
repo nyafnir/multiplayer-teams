@@ -1,6 +1,12 @@
 import AdmZip from "adm-zip";
 import open from "open";
-import { readdirSync, readFileSync, unlinkSync, writeFileSync } from "fs";
+import {
+  readdirSync,
+  readFileSync,
+  unlinkSync,
+  writeFileSync,
+  existsSync,
+} from "fs";
 import psList from "ps-list";
 
 import { sleep } from "./utils.js";
@@ -140,14 +146,17 @@ export class FactorioModBuilder {
    * @returns {void}
    */
   createModInMods(pathToModFiles, modName, version) {
-    const fileName = `${modName}_${version}`;
-    const fileNameWithExt = `${fileName}.zip`;
+    const modFileName = `${modName}_${version}`;
+    const modFileNameWithExt = `${modFileName}.zip`;
 
     const dirNames = ["locale", "prototypes"];
     for (const dirName of dirNames) {
+      if (!existsSync(`${pathToModFiles}/${dirName}`)) {
+        continue;
+      }
       this.zipService.addLocalFolder(
-        pathToModFiles + dirName,
-        fileName + "/" + dirName
+        `${pathToModFiles}/${dirName}`,
+        `${modName}/${dirName}`
       );
     }
 
@@ -161,13 +170,18 @@ export class FactorioModBuilder {
       "data.lua",
     ];
     for (const fileName of fileNames) {
-      this.zipService.addLocalFile(pathToModFiles + fileName, fileName + "/");
+      if (!existsSync(`${pathToModFiles}/${fileName}`)) {
+        continue;
+      }
+      this.zipService.addLocalFile(`${pathToModFiles}/${fileName}`, modName);
     }
 
-    this.zipService.writeZip(`${this.pathToMods}\\${fileNameWithExt}`);
+    this.zipService.writeZip(`${this.pathToMods}\\${modFileNameWithExt}`);
 
     console.info(
-      this.formatLog(`Новая версия "${fileNameWithExt}" помещена в папку игры.`)
+      this.formatLog(
+        `Новая версия "${modFileNameWithExt}" помещена в папку игры.`
+      )
     );
 
     this.activateModInMods(modName);
@@ -182,14 +196,14 @@ export class FactorioModBuilder {
      */
     const data = JSON.parse(readFileSync(this.pathToModListFile, "utf8"));
 
-    let mod = data.mods.find((mod) => mod.name === modName);
-    if (!mod) {
-      mod = {
+    let modIndex = data.mods.findIndex((mod) => mod.name === modName);
+    if (modIndex === -1) {
+      data.mods.push({
         name: modName,
         enabled: true,
-      };
-    } else if (!mod.enabled) {
-      mod.enabled = true;
+      });
+    } else if (!data.mods[modIndex].enabled) {
+      data.mods[modIndex].enabled = true;
     } else {
       return;
     }
