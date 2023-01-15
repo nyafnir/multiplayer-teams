@@ -48,17 +48,6 @@ local function initPrices(force)
 
 end
 
-local function setCash(playerName, cash)
-    global.economy.balances[playerName].coins = cash
-end
-
-local function popCash(playerName, cash)
-    if cash > global.economy.balances[playerName].coins then return false end
-    global.economy.balances[playerName].coins =
-        global.economy.balances[playerName].coins - cash
-    return true
-end
-
 ---обмен
 -- trade(teamId1, teamId2, products)
 
@@ -93,7 +82,7 @@ local function showShopBuyUI(player, entity)
 
         gui.auto_center = true
 
-        Styles.addTitlebar(gui, "Продажа", 'my-mod-x-button')
+        Styles.addTitlebar(gui, "Продажа", prefix .. '-x-button')
 
         local contentFrame = gui.add({
             type = "flow",
@@ -333,8 +322,7 @@ local function showShopBuyUI(player, entity)
                     end
                 end)
 
-                script.on_event(defines.events.on_player_main_inventory_changed,
-                                function(event)
+                script.on_event(defines.events.on_player_main_inventory_changed, function(_)
                     if player_gui['shop-gui'] ~= nil then
                         drawShopGUI()
                     end
@@ -345,7 +333,6 @@ local function showShopBuyUI(player, entity)
             drawOrderController()
             player.opened = gui
 
-            -- player.print(serpent.dump(shopInventory))
             script.on_event(defines.events.on_gui_click, function(event)
                 local element = event.element
                 if not element.valid then return end
@@ -359,16 +346,21 @@ local function showShopBuyUI(player, entity)
                     return
                 end
 
-                if element.name == "my-mod-x-button" then
-                    element.parent.parent.destroy()
-                    return
+                if element.name == prefix .. '-x-button' then
+                    gui.destroy()
                 end
+            end)
+
+            script.on_event(prefix .. "_E_closeGUI", function(_)
+                gui.destroy()                
+            end)
+            script.on_event(prefix .. "_ESCAPE_closeGUI", function(_)
+                gui.destroy()                
             end)
 
         end
 
         drawShopGUI()
-
     end
 end
 
@@ -376,39 +368,36 @@ local function shopGUI()
     script.on_event(defines.events.on_gui_opened, function(event)
         if event.entity == nil then return end
         -- тут добавить проверку что фракция не соответствует игроку, тогда показываем магазин иначе склад!
-        if event.entity.name == 'shop-buy' then
-            local player = game.players[event.player_index]
-            if not player or not player.valid then return end
-            showShopBuyUI(player, event.entity)
-        end
-    end)
-
-    script.on_event(defines.events.on_gui_click, function(event)
-        local guiName = event.element.name
-        if guiName == "my-mod-x-button" then
-            event.element.parent.parent.destroy()
-            return
-        end
+        if event.entity.name ~= 'shop-buy' then return end
+        local player = getPlayerById(event.player_index)
+        if not player or not player.valid then return end
+        if player.force.index == event.entity.last_user.force.index then return end
+        showShopBuyUI(player, event.entity)
     end)
 end
 
 function initModuleEconomy()
     global.economy = {
         balances = {},
-        prices = {}
+        prices = {},
+        teams = {}
     }
     initPrices(teams.store.forces.getDefault())
     -- global.economy.balances[player.force.index] = {coins = 0}
 
-    -- shopGUI()
+    shopGUI()
 end
 
 script.on_event(defines.events.on_player_joined_game, function(event)
     local player = getPlayerById(event.player_index)
-    logger.debug('Игрок ' .. player.name ..
+    logger.chat('Игрок ' .. player.name ..
                      ' присоединился к игре')
     if global.economy.balances[event.player_index] ~= nil then return end
     global.economy.balances[event.player_index] = {
         coins = 0
     }
 end)
+
+-- script.on_event(_, function(event)
+    
+-- end)

@@ -1,16 +1,15 @@
--- врмея ЗП в минутах
-local TIME_SALARY = 2
+-- время между ЗП в минутах
+local TIME_SALARY = 1
 -- 1 секунда = 60 тиков, 1 минута = 60 тиков * 60 секунд
 local ticksToSalary = 60 * 10
-local iteration = 0
 local sum = {}
 
 -- fluid magic коээфицент для жидкостей
 local FLUID_COEFFICIENT = 0.05
 
-local function addCash(playerId, cash)
-    global.economy.balances[playerId].coins =
-        global.economy.balances[playerId].coins + cash
+function addCash(teamId, cash)
+    global.economy.balances[teamId].coins =
+        global.economy.balances[teamId].coins + cash
 end
 
 local function accamulateSalary(player)
@@ -66,7 +65,10 @@ script.on_nth_tick(ticksToSalary, function()
     if getSize(global.economy.balances) == 0 then return end
     global.iteration = global.iteration or 0
     global.iteration = global.iteration + 1
+    -- teams.store.forces
+    logger.debug(forces)
     for id, _ in pairs(global.economy.balances) do
+        if id == 1 then goto continue end
         local player = getPlayerById(id)
         if sum[id] == nil then sum[id] = 0 end
         sum[id] = sum[id] + accamulateSalary(player)
@@ -81,9 +83,8 @@ script.on_nth_tick(ticksToSalary, function()
                     'Корпарация вами не довольна. В этот раз вы потратили ресурсов больше чем добыли, поэтому деньги не будут начислены.\nВсего на счету: ' ..
                         global.economy.balances[id].coins)
             end
+            global.iteration, sum = 0, {}
         end
-    end
-    if global.iteration == TIME_SALARY then
-        global.iteration, sum = 0, {}
+        ::continue::
     end
 end)

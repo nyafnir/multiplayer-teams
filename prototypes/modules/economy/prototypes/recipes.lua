@@ -2,6 +2,6 @@ data:extend({{
     type = "recipe",
     name = "shop-buy",
     enabled = true,
-    ingredients = {{"copper-ore", 8}},
+    ingredients = {{"iron-plate", 1}},
     result = "shop-buy"
 }})
