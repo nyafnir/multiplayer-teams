@@ -63,3 +63,9 @@ function this.getOffer(ownerToId) relations.store.offers.get(ownerToId) end
 function this.removeOffer(ownerToId) relations.store.offers.remove(ownerToId) end
 
 return this
+
+-- function this.switchFriendlyFire(command)
+--     local player = playerService.getById(command.player_index)
+-- game.player.force.friendly_fire = false -- FROM OFF DOC!
+--     player.force.set_cease_fire(player.force, force.friendly_fire == false)
+-- end

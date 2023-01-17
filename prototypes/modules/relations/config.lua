@@ -1,5 +1,5 @@
 return {
-    enable = getConfig('relations:enable'),
+    enabled = getConfig('relations:enabled'),
     offer = {
         timeout = {
             minutes = getConfig('relations:offer-timeout'),
