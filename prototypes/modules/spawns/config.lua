@@ -1,6 +1,6 @@
 return {
     --- Вкл / выкл модуль
-    enable = getConfig('spawns:enable'),
+    enabled = getConfig('spawns:enabled'),
     --- Архимедова спираль для генерации точек для новых баз
     archimedeanSpiral = {
         step = getConfig('spawns:archimedean-spiral:step'),

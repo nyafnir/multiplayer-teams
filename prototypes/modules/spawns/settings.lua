@@ -5,7 +5,7 @@ local prefix = 3
 data:extend({
     {
         type = 'bool-setting',
-        name = 'multiplayer-teams:spawns:enable',
+        name = 'multiplayer-teams:spawns:enabled',
         setting_type = 'startup',
         default_value = true,
         order = prefix .. '-spawns-1'
