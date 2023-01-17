@@ -1,10 +1,6 @@
 {
     "recommendations": [
         "svizzini.factorio-lua-api-autocomplete",
-        "operali.lua-booster",
-        "vscode-icons-team.vscode-icons",
-        "grimmer.vscode-back-forward-button",
-        "alefragnani.bookmarks",
-        "mhutchie.git-graph",
+        "sumneko.lua"
     ]
 }
