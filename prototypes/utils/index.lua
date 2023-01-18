@@ -3,5 +3,4 @@ Utils = {
     string = require('prototypes.utils.string'),
     table = require('prototypes.utils.table'),
     time = require('prototypes.utils.time'),
-    styles = require('prototypes.utils.styles') -- TODO: move to service?
 }

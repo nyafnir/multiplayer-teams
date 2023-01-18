@@ -19,7 +19,7 @@ function this.showShopBuyUI(player, entity)
 
         gui.auto_center = true
 
-        Utils.styles.addTitlebar(gui, "Продажа", configService.config.prefix .. '-x-button')
+        styleService.addTitlebar(gui, "Продажа", configService.config.prefix .. '-x-button')
 
         local contentFrame = gui.add({
             type = "flow",
@@ -28,7 +28,7 @@ function this.showShopBuyUI(player, entity)
         })
 
         local function drawShopGUI()
-            Utils.styles.addInventory(contentFrame, player.get_main_inventory())
+            styleService.addInventory(contentFrame, player.get_main_inventory())
             local separator = '='
 
             local shopGUI = contentFrame.add({

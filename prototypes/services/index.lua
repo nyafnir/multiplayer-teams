@@ -4,3 +4,4 @@ configService = require('prototypes.services.config')
 loggerService = require('prototypes.services.logger.service') -- использует `configService` и `Utils`
 colorService = require('prototypes.services.color')
 playerService = require('prototypes.services.player')
+styleService = require('prototypes.services.style')
