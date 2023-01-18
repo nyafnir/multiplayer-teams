@@ -1,13 +1,16 @@
 local this = {
     config = {
-        prefix = 'mt:'
+        ---Используется в настроках, локализации и именовании сущностей
+        prefix = 'mt',
+        ---Используется в путях к файлам мода
+        prefixRoot = '__MultiplayerTeams__'
     }
 }
 
 ---@param name string
 ---@return string
 function this.getKey(name)
-    return this.config.prefix .. name
+    return this.config.prefix .. ':' .. name
 end
 
 ---Получение значения настройки `name` (указывать префикс не нужно).
