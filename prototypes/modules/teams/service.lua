@@ -1,10 +1,10 @@
 ---NOTE: важно различать team name (имя) и team title (название), название можно менять, а имя нет.
 ---NOTE: у игрока всегда есть команда, не может быть игрока без команды.
 
-local this = {}
+local this = {
+    defaultForceName = 'player'
+}
 local admin = {}
-
-local defaultForceName = 'player'
 
 ---Создаёт MTTeam-s на основе LuaForce-s, если объекта команд нет в глобале.
 ---Возвращает объект команд.
@@ -89,7 +89,7 @@ function this.create(teamName, requesterId, color)
     local forceCurrent = requester.force
 
     ---Если игрок состоял в команде не по умолчанию, то удаляем её
-    if forceCurrent.name ~= defaultForceName then
+    if forceCurrent.name ~= this.defaultForceName then
         ---Заглушаем выброс ошибки, если это не владелец команды
         pcall(this.admin.remove, this.getByName(forceCurrent.name).title, requester.index)
     end
@@ -131,7 +131,7 @@ function this.remove(requesterId)
     end
 
     ---Сливаем `force` в команду по умолчанию
-    game.merge_forces(team.name, game.forces[defaultForceName].name)
+    game.merge_forces(team.name, game.forces[this.defaultForceName].name)
 
     local teamTitle = team.title
     local teamColor = team.color
@@ -272,7 +272,7 @@ function this.kick(playerNickname, requesterId)
         error({ configService.getKey('teams:kick.error-player-not-in-team') })
     end
 
-    player.force = defaultForceName
+    player.force = this.defaultForceName
 
     game.print({ configService.getKey('teams:kick.result'), player.name, team.title }, team.color)
 end
@@ -282,7 +282,7 @@ function this.leave(requesterId)
     local requester = playerService.getById(requesterId)
     local force = requester.force
 
-    if force.name == defaultForceName then
+    if force.name == this.defaultForceName then
         error({ configService.getKey('teams:leave.error-cant-leave-default') })
     end
 
@@ -294,7 +294,7 @@ function this.leave(requesterId)
         error({ configService.getKey('teams:leave.error-owner-cant-leave') })
     end
 
-    requester.force = defaultForceName
+    requester.force = this.defaultForceName
 
     game.print({ configService.getKey('teams:leave.result'), requester.name, team.title }, team.color)
 end
@@ -338,7 +338,7 @@ function admin.remove(teamTitle, requesterId)
     this.getTeams()[team.name] = nil
 
     ---Сливаем `force` в команду по умолчанию
-    game.merge_forces(teamName, game.forces[defaultForceName].name)
+    game.merge_forces(teamName, game.forces[this.defaultForceName].name)
 
     game.print({ configService.getKey('teams:admin:remove.result'), teamTitle }, teamColor)
 end
