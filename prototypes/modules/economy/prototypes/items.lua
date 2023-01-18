@@ -1,6 +1,6 @@
-local ROOT = '__MultiplayerTeams__'
+local ROOT = configService.config.prefixRoot
 
-data:extend({{
+data:extend({ {
     type = "item",
     name = "shop-buy",
     icon = ROOT .. "/prototypes/graphics/icons/shop-buy/shop.png",
@@ -10,4 +10,4 @@ data:extend({{
     order = "a[items]-b[iron-chest]",
     place_result = "shop-buy",
     stack_size = 10
-}})
+} })

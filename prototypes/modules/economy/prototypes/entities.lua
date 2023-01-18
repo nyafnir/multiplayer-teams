@@ -1,4 +1,5 @@
-local ROOT = '__MultiplayerTeams__'
+local ROOT = configService.config.prefixRoot
+
 ShopEntityPrototype = {}
 setmetatable(ShopEntityPrototype, {
     __index = LuaEntity
@@ -19,7 +20,7 @@ data:extend({
         icon_size = 64,
         icon_mipmaps = 4,
         -- enable_inventory_bar = false,
-        flags = {"placeable-neutral", "player-creation"},
+        flags = { "placeable-neutral", "player-creation" },
         minable = {
             mining_time = 0.5,
             result = "shop-buy"
@@ -27,8 +28,8 @@ data:extend({
         max_health = 800,
         corpse = "iron-chest-remnants",
         dying_explosion = "iron-chest-explosion",
-        collision_box = {{-1.2, -1.2}, {1.2, 1.2}},
-        selection_box = {{-1.5, -1.5}, {1.5, 1.5}},
+        collision_box = { { -1.2, -1.2 }, { 1.2, 1.2 } },
+        selection_box = { { -1.5, -1.5 }, { 1.5, 1.5 } },
         -- damaged_trigger_effect = hit_effects.entity(),
         inventory_size = 64,
         -- vehicle_impact_sound = sounds.generic_impact,

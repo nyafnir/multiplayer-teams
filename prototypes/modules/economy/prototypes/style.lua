@@ -1,19 +1,18 @@
-local ROOT = '__MultiplayerTeams__'
-local prefix = 'multiplayer-teams'
+local prefix = configService.config.prefix
 
-styles = data.raw["gui-style"].default
+local styles = data.raw["gui-style"].default
 
-styles[prefix..'-verical-flow'] = {
+styles[prefix .. '-verical-flow'] = {
     type = "frame_style",
     parent = "inside_shallow_frame_with_padding",
 }
 
-styles[prefix.."-controls-textfield"] = {
+styles[prefix .. "-controls-textfield"] = {
     type = "textbox_style",
     width = 56
 }
 
-styles[prefix.."-deep-frame"] = {
+styles[prefix .. "-deep-frame"] = {
     type = "frame_style",
     parent = "slot_button_deep_frame",
     vertically_stretchable = "on",
@@ -32,4 +31,4 @@ styles["icon_count"] = {
     horizontal_align = "right",
     vertical_align = "bottom",
     right_padding = 2,
-  }
+}
