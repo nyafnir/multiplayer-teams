@@ -6,14 +6,19 @@ local this = {
 }
 local admin = {}
 
+local hasGlobal = false
+
 ---Создаёт MTTeam-s на основе LuaForce-s, если объекта команд нет в глобале.
 ---Возвращает объект команд.
 function this.getTeams()
-    ---Если хранилище уже инициализировано, то игнорируем
-    if global.teams ~= nil and Utils.table.getSize(global.teams) > 0 then return global.teams end
+    if hasGlobal then
+        return global.teams
+    end
 
-    --- Создаём объект хранения
-    global.teams = {}
+    if global.teams == nil then
+        --- Создаём объект хранения
+        global.teams = {}
+    end
 
     ---Добавляем существующие команды
     for forceName, force in pairs(game.forces) do
@@ -61,7 +66,8 @@ function this.getTeams()
         ::continue::
     end
 
-    return global.teams
+    hasGlobal = true
+    return this.getTeams()
 end
 
 ---Создаёт `LuaForce` и `MTTeam`.
