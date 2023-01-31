@@ -63,6 +63,10 @@ function this.setEnemy(otherTeamTitle, requesterId)
     end
     local enemyForce = game.forces[otherTeam.name]
 
+    if team.id == otherTeam.id then
+        error({ configService.getKey('relations:set.error-cant-offer-self'), otherTeam })
+    end
+
     ---Если нейтральная, то будет true как и у друзей, поэтому
     ---тут проверяется только вражда
     if requester.force.is_friend(enemyForce) == false then
@@ -97,6 +101,10 @@ function this.setFriend(otherTeamTitle, requesterId)
         error({ configService.getKey('relations:set.error-team-not-founded'), otherTeam })
     end
     local friendForce = game.forces[otherTeam.name]
+
+    if team.id == otherTeam.id then
+        error({ configService.getKey('relations:set.error-cant-offer-self'), otherTeam })
+    end
 
     if requester.force.get_friend(friendForce) then
         error({ configService.getKey('relations:set:friend.error-already-friend'), otherTeam })
@@ -142,6 +150,10 @@ function this.setNeutral(otherTeamTitle, requesterId)
         error({ configService.getKey('relations:set.error-team-not-founded'), otherTeam })
     end
     local neutralForce = game.forces[otherTeam.name]
+
+    if team.id == otherTeam.id then
+        error({ configService.getKey('relations:set.error-cant-offer-self'), otherTeam })
+    end
 
     if requester.force.is_friend(neutralForce) == true
         and requester.force.get_friend(neutralForce) == false
