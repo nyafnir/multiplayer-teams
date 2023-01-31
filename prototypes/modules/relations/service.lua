@@ -54,7 +54,7 @@ function this.setEnemy(otherTeamTitle, requesterId)
         error({ configService.getKey('relations:set.error-team-not-owner') })
     end
 
-    if otherTeamTitle == nil then
+    if otherTeamTitle == nil or otherTeamTitle == '' then
         error({ configService.getKey('relations:set.error-title-not-specified') })
     end
     local otherTeam = teamModule.service.getByTitle(otherTeamTitle)
@@ -93,7 +93,7 @@ function this.setFriend(otherTeamTitle, requesterId)
         error({ configService.getKey('relations:set.error-team-not-owner') })
     end
 
-    if otherTeamTitle == nil then
+    if otherTeamTitle == nil or otherTeamTitle == '' then
         error({ configService.getKey('relations:set.error-title-not-specified') })
     end
     local otherTeam = teamModule.service.getByTitle(otherTeamTitle)
@@ -142,7 +142,7 @@ function this.setNeutral(otherTeamTitle, requesterId)
         error({ configService.getKey('relations:set.error-team-not-owner') })
     end
 
-    if otherTeamTitle == nil then
+    if otherTeamTitle == nil or otherTeamTitle == '' then
         error({ configService.getKey('relations:set.error-title-not-specified') })
     end
     local otherTeam = teamModule.service.getByTitle(otherTeamTitle)
@@ -189,6 +189,7 @@ function this.setNeutral(otherTeamTitle, requesterId)
         team.color)
 end
 
+---@param requesterId number
 function this.switchFriendlyFire(requesterId)
     local requester = playerService.getById(requesterId)
 
