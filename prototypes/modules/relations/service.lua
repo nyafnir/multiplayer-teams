@@ -59,18 +59,18 @@ function this.setEnemy(otherTeamTitle, requesterId)
     end
     local otherTeam = teamModule.service.getByTitle(otherTeamTitle)
     if otherTeam == nil or otherTeam.ownerId == nil then
-        error({ configService.getKey('relations:set.error-team-not-founded'), otherTeam })
+        error({ configService.getKey('relations:set.error-team-not-founded'), otherTeamTitle })
     end
     local enemyForce = game.forces[otherTeam.name]
 
     if team.id == otherTeam.id then
-        error({ configService.getKey('relations:set.error-cant-offer-self'), otherTeam })
+        error({ configService.getKey('relations:set.error-cant-offer-self') })
     end
 
     ---Если нейтральная, то будет true как и у друзей, поэтому
     ---тут проверяется только вражда
     if requester.force.is_friend(enemyForce) == false then
-        error({ configService.getKey('relations:set:enemy.error-already-enemy'), otherTeam })
+        error({ configService.getKey('relations:set:enemy.error-already-enemy'), otherTeam.title })
     end
 
     requester.force.set_friend(enemyForce, false)
@@ -98,16 +98,16 @@ function this.setFriend(otherTeamTitle, requesterId)
     end
     local otherTeam = teamModule.service.getByTitle(otherTeamTitle)
     if otherTeam == nil or otherTeam.ownerId == nil then
-        error({ configService.getKey('relations:set.error-team-not-founded'), otherTeam })
+        error({ configService.getKey('relations:set.error-team-not-founded'), otherTeamTitle })
     end
     local friendForce = game.forces[otherTeam.name]
 
     if team.id == otherTeam.id then
-        error({ configService.getKey('relations:set.error-cant-offer-self'), otherTeam })
+        error({ configService.getKey('relations:set.error-cant-offer-self') })
     end
 
     if requester.force.get_friend(friendForce) then
-        error({ configService.getKey('relations:set:friend.error-already-friend'), otherTeam })
+        error({ configService.getKey('relations:set:friend.error-already-friend'), otherTeam.title })
     end
 
     ---@type MTOfferInput
@@ -147,18 +147,18 @@ function this.setNeutral(otherTeamTitle, requesterId)
     end
     local otherTeam = teamModule.service.getByTitle(otherTeamTitle)
     if otherTeam == nil or otherTeam.ownerId == nil then
-        error({ configService.getKey('relations:set.error-team-not-founded'), otherTeam })
+        error({ configService.getKey('relations:set.error-team-not-founded'), otherTeamTitle })
     end
     local neutralForce = game.forces[otherTeam.name]
 
     if team.id == otherTeam.id then
-        error({ configService.getKey('relations:set.error-cant-offer-self'), otherTeam })
+        error({ configService.getKey('relations:set.error-cant-offer-self') })
     end
 
     if requester.force.is_friend(neutralForce) == true
         and requester.force.get_friend(neutralForce) == false
     then
-        error({ configService.getKey('relations:set:neutral.error-already-neutral'), otherTeam })
+        error({ configService.getKey('relations:set:neutral.error-already-neutral'), otherTeam.title })
     end
 
     ---Если друзья, то без заявок
