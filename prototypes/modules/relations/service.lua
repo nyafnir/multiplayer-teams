@@ -58,7 +58,7 @@ function this.setEnemy(otherTeamTitle, requesterId)
         error({ configService.getKey('relations:set.error-title-not-specified') })
     end
     local otherTeam = teamModule.service.getByTitle(otherTeamTitle)
-    if otherTeam == nil then
+    if otherTeam == nil or otherTeam.ownerId == nil then
         error({ configService.getKey('relations:set.error-team-not-founded'), otherTeam })
     end
     local enemyForce = game.forces[otherTeam.name]
@@ -97,7 +97,7 @@ function this.setFriend(otherTeamTitle, requesterId)
         error({ configService.getKey('relations:set.error-title-not-specified') })
     end
     local otherTeam = teamModule.service.getByTitle(otherTeamTitle)
-    if otherTeam == nil then
+    if otherTeam == nil or otherTeam.ownerId == nil then
         error({ configService.getKey('relations:set.error-team-not-founded'), otherTeam })
     end
     local friendForce = game.forces[otherTeam.name]
@@ -146,7 +146,7 @@ function this.setNeutral(otherTeamTitle, requesterId)
         error({ configService.getKey('relations:set.error-title-not-specified') })
     end
     local otherTeam = teamModule.service.getByTitle(otherTeamTitle)
-    if otherTeam == nil then
+    if otherTeam == nil or otherTeam.ownerId == nil then
         error({ configService.getKey('relations:set.error-team-not-founded'), otherTeam })
     end
     local neutralForce = game.forces[otherTeam.name]
