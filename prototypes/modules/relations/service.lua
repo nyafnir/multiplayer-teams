@@ -29,7 +29,9 @@ function this.listFor(teamName)
             goto continue
         end
 
-        if requesterForce.is_enemy(otherTeamName) then
+        if requesterForce.is_friend(otherTeamName) == false
+            and requesterForce.get_cease_fire(otherTeamName) == false
+        then
             table.insert(result.enemies, teamTitle)
         else
             table.insert(result.neutrals, teamTitle)
@@ -78,9 +80,9 @@ function this.setEnemy(otherTeamTitle, requesterId)
     -- вражда
     requester.force.set_friend(enemyForce, false)
     enemyForce.set_friend(requester.force, false)
-
-    requester.force.set_cease_fire(enemyForce, true)
-    enemyForce.set_cease_fire(requester.force, true)
+    -- стреляют по друг другу
+    requester.force.set_cease_fire(enemyForce, false)
+    enemyForce.set_cease_fire(requester.force, false)
 
     game.print({ configService.getKey('relations:set:enemy.result'), team.title, otherTeam.title },
         colorService.list.yellow)
@@ -218,7 +220,7 @@ function this.switchFriendlyFire(requesterId)
     end
 
     local permission = configService.getKey('relations:friendly-fire.result-' .. tostring(requester.force.friendly_fire))
-    requester.force.print({ configService.getKey('relations:friendly-fire.result-template'), team.title, permission },
+    requester.force.print({ permission, team.title },
         team.color)
 end
 
