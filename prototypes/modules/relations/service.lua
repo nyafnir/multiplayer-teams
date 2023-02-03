@@ -76,7 +76,7 @@ function this.setEnemy(otherTeamTitle, requesterId)
     requester.force.set_friend(enemyForce, false)
     requester.force.set_cease_fire(enemyForce, true)
 
-    game.print({ configService.getKey('trelations:set:enemy.result'), team.title, otherTeam.title },
+    game.print({ configService.getKey('relations:set:enemy.result'), team.title, otherTeam.title },
         colorService.list.yellow)
 end
 
