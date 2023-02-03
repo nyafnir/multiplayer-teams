@@ -1,11 +1,10 @@
-local this = {}
+local this = {
+    onMTTeamInviteResolve = script.generate_event_name()
+}
 
-script.on_event(offerModule.events.on_offer_resolve,
+script.on_event(this.onMTTeamInviteResolve,
     ---@param event MTOfferEventResolve
     function(event)
-        if event.eventName ~= 'team_invite' then
-            return
-        end
         ---@type { teamName: string }
         local data = event.data
 

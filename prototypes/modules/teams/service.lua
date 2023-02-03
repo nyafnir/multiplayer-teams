@@ -422,7 +422,7 @@ function this.sendInvite(playerNickname, requesterId)
 
     ---@type MTOfferInput
     local offerInput = {
-        eventName = 'team_invite',
+        eventId = teamModule.events.onMTTeamInviteResolve,
         playerId = player.index,
         localisedMessage = { configService.getKey('teams:invite.result-recipient'), team.title },
         timeoutMinutes = configService.get('teams:invite-timeout'),

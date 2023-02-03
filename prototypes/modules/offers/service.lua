@@ -38,7 +38,7 @@ end
 function this.create(offerInput)
     local offer = {
         id = math.random(9999),
-        eventName = offerInput.eventName,
+        eventId = offerInput.eventId,
         playerId = offerInput.playerId,
         localisedMessage = offerInput.localisedMessage,
         expiredAtTicks = game.ticks_played + Utils.time.convertMinutesToTicks(offerInput.timeoutMinutes),
@@ -95,13 +95,13 @@ local function resolve(offerId, playerId, isAccept)
     end
 
     local eventData = {
-        eventName = offer.eventName,
+        eventId = offer.eventId,
         playerId = offer.playerId,
         resolve = isAccept,
         data = offer.data
     }
 
-    script.raise_event(offerModule.events.on_offer_resolve, eventData)
+    script.raise_event(offerModule.events.onMTOfferResolve, eventData)
 
     this.removeById(offerId)
 end

@@ -69,12 +69,18 @@ function this.setEnemy(otherTeamTitle, requesterId)
 
     ---Если нейтральная, то будет true как и у друзей, поэтому
     ---тут проверяется только вражда
-    if requester.force.is_friend(enemyForce) == false then
+    if requester.force.is_friend(enemyForce) == false
+        and requester.force.get_cease_fire(enemyForce) == false
+    then
         error({ configService.getKey('relations:set:enemy.error-already-enemy'), otherTeam.title })
     end
 
+    -- вражда
     requester.force.set_friend(enemyForce, false)
+    enemyForce.set_friend(requester.force, false)
+
     requester.force.set_cease_fire(enemyForce, true)
+    enemyForce.set_cease_fire(requester.force, true)
 
     game.print({ configService.getKey('relations:set:enemy.result'), team.title, otherTeam.title },
         colorService.list.yellow)
@@ -112,7 +118,7 @@ function this.setFriend(otherTeamTitle, requesterId)
 
     ---@type MTOfferInput
     local offerInput = {
-        eventName = 'relation_offer',
+        eventId = relationModule.events.onMTRelationOfferResolve,
         playerId = otherTeam.ownerId,
         localisedMessage = { configService.getKey('relations:set:friend.result-recipient'), team.title },
         timeoutMinutes = configService.get('relations:offer-timeout'),
@@ -163,8 +169,12 @@ function this.setNeutral(otherTeamTitle, requesterId)
 
     ---Если друзья, то без заявок
     if requester.force.get_friend(neutralForce) then
+        -- вражда
         requester.force.set_friend(neutralForce, false)
-        requester.force.set_cease_fire(neutralForce, false)
+        neutralForce.set_friend(requester.force, false)
+        -- не стреляют по друг другу
+        requester.force.set_cease_fire(neutralForce, true)
+        neutralForce.set_cease_fire(requester.force, true)
 
         return game.print({ configService.getKey('relations:set:neutral.become-neutral'), team.title, otherTeam.title },
             team.color)
@@ -172,7 +182,7 @@ function this.setNeutral(otherTeamTitle, requesterId)
 
     ---@type MTOfferInput
     local offerInput = {
-        eventName = 'relation_offer',
+        eventId = relationModule.events.onMTRelationOfferResolve,
         playerId = otherTeam.ownerId,
         localisedMessage = { configService.getKey('relations:set:neutral.result-recipient'), team.title },
         timeoutMinutes = configService.get('relations:offer-timeout'),
@@ -201,11 +211,14 @@ function this.switchFriendlyFire(requesterId)
         error({ configService.getKey('relations:friendly-fire.error-team-not-owner') })
     end
 
-    local friendly_fire = requester.force.friendly_fire == true
-    requester.force.friendly_fire = friendly_fire
+    if requester.force.friendly_fire then
+        requester.force.friendly_fire = false
+    else
+        requester.force.friendly_fire = true
+    end
 
-    requester.force.print({ configService.getKey('relations:friendly-fire.result-template'), team.title,
-        configService.getKey('relations:friendly-fire.result-' .. friendly_fire) },
+    local permission = configService.getKey('relations:friendly-fire.result-' .. tostring(requester.force.friendly_fire))
+    requester.force.print({ configService.getKey('relations:friendly-fire.result-template'), team.title, permission },
         team.color)
 end
 
