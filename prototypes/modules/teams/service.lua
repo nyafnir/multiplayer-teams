@@ -118,6 +118,12 @@ function this.create(teamName, requesterId, color)
     game.print({ configService.getKey('teams:create.result'), team.title, requester.name }, team.color)
     requester.print({ configService.getKey('teams:create.result-backstory') }, team.color)
 
+    ---*Разрешено, поэтому код закомментирован
+    ---Запрещаем нанесение урона между "Без команды" и новой командой
+    -- local forceDefault = game.forces[this.defaultForceName]
+    -- forceDefault.set_cease_fire(forceNew, true)
+    -- forceNew.set_cease_fire(forceDefault, true)
+
     return team
 end
 
