@@ -220,8 +220,7 @@ function this.switchFriendlyFire(requesterId)
     end
 
     local permission = configService.getKey('relations:friendly-fire.result-' .. tostring(requester.force.friendly_fire))
-    requester.force.print({ permission, team.title },
-        team.color)
+    requester.force.print({ permission, team.title }, team.color)
 end
 
 return this
