@@ -1,5 +1,5 @@
 local this = {
-    on_offer_resolve = script.generate_event_name()
+    onMTOfferResolve = script.generate_event_name()
 }
 
 ---Интервально проверяем наличие истёкших предложений и удаляем их.
@@ -16,5 +16,11 @@ script.on_nth_tick(Utils.time.convertMinutesToTicks(1), function()
         end
     end
 end)
+
+script.on_event(this.onMTOfferResolve,
+    ---@param event MTOfferEventResolve
+    function(event)
+        script.raise_event(event.eventId, event)
+    end)
 
 return this
