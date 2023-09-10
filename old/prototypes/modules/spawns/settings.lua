@@ -2,7 +2,7 @@ local prefix = 3
 
 data:extend({
     {
-        order = prefix .. '-spawns-'.. 0
+        order = prefix .. '-spawns-'.. 0,
         name = 'mt:spawns:enabled',
         default_value = true,
         type = 'bool-setting',
@@ -44,7 +44,7 @@ data:extend({
 
 data:extend({
     {
-        order = prefix .. '-spawns-'.. 20
+        order = prefix .. '-spawns-'.. 20,
         name = 'mt:spawns:options:respawn:timeout',
         default_value = 10, -- минуты
         minimum_value = 5,
@@ -117,7 +117,7 @@ data:extend({
                 location = 'far'
             }
         }]]
-    }
+    },
     type = 'string-setting',
     setting_type = 'startup',
     hidden = false,
