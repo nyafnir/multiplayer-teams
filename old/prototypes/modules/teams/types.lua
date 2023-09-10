@@ -1,0 +1,1 @@
+---@alias MTTeam { id: string, name: string, title: string, color: Color, ownerId: number | nil }
