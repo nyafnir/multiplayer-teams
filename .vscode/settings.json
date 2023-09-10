@@ -1,0 +1,18 @@
+{
+    "Lua.diagnostics.globals": [
+        "table_size",
+        "serpent",
+        "game",
+        "log",
+        "data",
+        "settings",
+        "script",
+        "defines",
+        "commands",
+        "global"
+    ],
+    "markdownlint.config": {
+        "MD036": false,
+        "MD041": false,
+    }
+}
