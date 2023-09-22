@@ -1,4 +1,19 @@
----@diagnostic disable: lowercase-global
+--- Импорты используемые по проекту
+--- Порядок зависит от использования одного модуля другим
+require('prototypes.services.config.index')
+require('prototypes.services.logger.index')
 
----Импорты используемые по проекту
----Порядок зависит от использования одного модуля другим
+--- [Событие] Происходит после создания карты с включенным модом
+script.on_init(function()
+end)
+
+--- [Событие] Происходит после загрузки и сохранения
+--- Нет доступа к изменению `global`!
+script.on_load(function()
+end)
+
+--- Проверка работоспособности логгера, событие при присоединении игрока
+script.on_event(defines.events.on_player_joined_game, function(_)
+    LoggerService.chat('Hi!')
+    LoggerService.debug('Debug enabled')
+end)
