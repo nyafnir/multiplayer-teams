@@ -54,4 +54,20 @@
 - Мод сделан для собственной игры с друзьями, поэтому дополнения и поддержка не планируется.
 - Вы можете сделать перевод для языка которого нет в моде (желательно через гитхаб).
 - Если у вас возникла проблема, то вы можете сообщить о ней через [Issue](https://github.com/nyafnir/multiplayer-teams/issues).
-- [Как настроить расширение `justarandomgeek.factoriomod-debug` для разработки?](https://www.youtube.com/watch?v=oNfMNFxy2X4)
+
+### Как настроить VSCode для разработки мода?
+
+- [Видео о том как это работает (на англ.)](https://www.youtube.com/watch?v=oNfMNFxy2X4)
+
+1. Устанавливаем расширение [`sumneko.lua`](vscode:extension/sumneko.lua) (валидация синтаксиса Lua)
+2. Устанавливаем расширение [`justarandomgeek.factoriomod-debug`](vscode:extension/justarandomgeek.factoriomod-debug) (дебаг; автодподсказки для `sumneko.lua`, которые определят глобальные прототипы [как в доке](https://lua-api.factorio.com/latest/index-prototype.html))
+3. Справа внизу появится окошко про сохранение идентификатора стим, жмем "Yes", а остальные игнорируем (уже закоммичено)
+4. Создаем символьную ссылку на мод в папку модов, так как дебагер работает только с тем что там видит
+
+    ```sh
+    Start-Process cmd -ArgumentList ("/k cd {0}" -f (Get-Location).path) -Verb RunAs # Откроет командную строку от имени админа в этой же папке
+    mklink /d "C:\Users\%USERNAME%\AppData\Roaming\Factorio\mods\MultiplayerTeams" "%cd%\src" # Создаст символьную ссылку из модов на папку проекта 'src'
+    ```
+
+5. Теперь в любой момент можно запустить дебаг режим (F5)
+6. Если у вас не нашёлся клиент игры, то нужно использовать кнопку снизу "Select Version Factorio" (или как-то так)
