@@ -1,0 +1,58 @@
+name: Auto Release
+
+on:
+  push:
+    branches: [master, dev]
+
+env:
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+
+jobs:
+  publish_github:
+    name: Релиз на GitHub
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Клонирование исходного кода
+        uses: actions/checkout@v4
+
+      - name: Извлечение информации о моде
+        run: |
+          MOD_INFO_JSON=$(cat ./src/info.json)
+          echo "MOD_NAME=$(echo ${MOD_INFO_JSON} | jq -r '.name')" >> $GITHUB_ENV
+          echo "MOD_VERSION=$(echo ${MOD_INFO_JSON} | jq -r '.version')" >> $GITHUB_ENV
+
+      - name: Получение списка изменений
+        run: |
+          grep -Pzo '(?![\s\S]*-{99}\n)Version[\s\S]+\nDate[\s\S]+\n([\s\S]*)' ./src/changelog.txt > changelog_null_byte.txt
+          head -n -1 changelog_null_byte.txt > changelog.md
+          rm changelog_null_byte.txt
+
+      - name: Упаковка мода в архив
+        run: cd src && zip -r ../${MOD_NAME}_${MOD_VERSION}.zip .
+
+      - name: Установка параметров релиза
+        run: |
+          echo "IS_PRERELEASE=$(if [ "${BRANCH_NAME}" != "master" ]; then echo true; else echo false; fi)" >> $GITHUB_ENV
+          echo "IS_DRAFT=$(if [ "${BRANCH_NAME}" != "master" ] && [ "${BRANCH_NAME}" != "dev" ]; then echo true; else echo false; fi)" >> $GITHUB_ENV
+
+      - name: Публикация
+        uses: softprops/action-gh-release@v1
+        with:
+          target_commitish: ${{ env.BRANCH_NAME }}
+          name: ${{ env.MOD_NAME }}_${{ env.MOD_VERSION }}
+          tag_name: v${{ env.MOD_VERSION }}
+          prerelease: ${{ env.IS_PRERELEASE == 'true' }}
+          draft: ${{ env.IS_DRAFT == 'true' }}
+          body_path: ./changelog.md
+          files: ${{ env.MOD_NAME }}_${{ env.MOD_VERSION }}.zip
+
+  publish_factorio:
+    name: Релиз на Factorio Mod Portal
+    needs: publish_github
+    runs-on: ubuntu-latest
+    if: endsWith(github.ref, '/master')
+    steps:
+      - name: Публикация
+        run: echo "TODO"
