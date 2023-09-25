@@ -1,0 +1,6 @@
+--- @class OfferCreateDto
+--- @field eventId number Постоянный идентификатор вашего события, где ждёте ответ
+--- @field playerId number Игрок которому предназначено предложение
+--- @field localisedMessage table Название aka заголовок aka тема предложения
+--- @field timeoutMinutes number Срок действия в минутах
+--- @field data table<any,any> Любые данные по предложению

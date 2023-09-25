@@ -1,3 +1,4 @@
+--- Сервис для вывода информации в чат
 LoggerService = {}
 
 require('prototypes.utils.string')

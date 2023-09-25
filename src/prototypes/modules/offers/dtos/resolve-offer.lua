@@ -1,0 +1,4 @@
+--- @class OfferResolveDto
+--- @field playerId number Игрок которому было предназначено предложение
+--- @field resolve boolean Его ответ (согласен или нет)
+--- @field data table<any,any> Дополнительные данные по предложению переданные изначально

@@ -1,7 +1,17 @@
 --- Импорты используемые по проекту
 --- Порядок зависит от использования одного модуля другим
+
 require('prototypes.services.config.index')
 require('prototypes.services.logger.index')
+
+require('prototypes.utils.color')
+require('prototypes.utils.math')
+require('prototypes.utils.player')
+require('prototypes.utils.string')
+require('prototypes.utils.table')
+require('prototypes.utils.time')
+
+require('prototypes.modules.offers.index')
 
 --- [Событие] Происходит после создания карты с включенным модом
 script.on_init(function()

@@ -1,0 +1,7 @@
+--- @class OfferEntity
+--- @field id number
+--- @field eventId number
+--- @field playerId number Игрок которому предназначено предложение
+--- @field localisedMessage table Название предложения
+--- @field expiredAtTicks number  Срок действия в тиках
+--- @field data table<any,any> Дополнительные данные по предложению
