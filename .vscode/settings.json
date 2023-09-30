@@ -19,6 +19,9 @@
         "c:\\Steam\\steamapps\\common\\Factorio\\data",
         "c:/Users/Ash/AppData/Roaming/Code/User/workspaceStorage/1386cda344fe364800b6d68af48ff049/justarandomgeek.factoriomod-debug/sumneko-3rd/factorio/library"
     ],
+    "Lua.workspace.ignoreDir": [
+        "old"
+    ],
     "markdownlint.config": {
         "MD036": false,
         "MD041": false,
