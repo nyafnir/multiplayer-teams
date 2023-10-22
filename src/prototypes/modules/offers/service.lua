@@ -21,7 +21,7 @@ function OfferModuleService.create(inputData, needNotify)
     table.insert(OfferModuleService.getAll(), offer.id, offer)
 
     if needNotify then
-        OfferModuleService.notifyPlayer(offer)
+        OfferModuleService.notifyByCreate(offer)
     end
 
     return offer
@@ -29,7 +29,7 @@ end
 
 --- Сообщает о новом предложении игроку в чат (ЛС)
 --- @param offer OfferEntity
-function OfferModuleService.notifyPlayer(offer)
+function OfferModuleService.notifyByCreate(offer)
     local player = PlayerUtils.getById(offer.playerId)
     player.print(offer.localisedMessage)
     player.print(
@@ -82,7 +82,7 @@ end
 --- @private
 --- Удаляет предложение по идентификатору.
 --- @param id number | string
-function OfferModuleService.removeById(id)
+function OfferModuleService.deleteById(id)
     if OfferModuleService.getAll()[id] ~= nil then
         OfferModuleService.getAll()[id] = nil
         return true
@@ -113,7 +113,7 @@ function OfferModuleService.resolve(offerId, playerId, resolve)
         data = offer.data
     }
 
-    OfferModuleService.removeById(offerId)
+    OfferModuleService.deleteById(offerId)
 
     script.raise_event(offer.eventId, eventData)
 end
