@@ -6,6 +6,7 @@ OfferModuleService = {}
 --- параметром `event: OfferResolveDto`.
 --- @param inputData OfferCreateDto
 --- @param needNotify boolean | nil Сообщить в чате о новом предложении в ЛС (по умолчанию: true)
+--- @return OfferEntity
 function OfferModuleService.create(inputData, needNotify)
     needNotify = needNotify and true or false
 
@@ -22,6 +23,8 @@ function OfferModuleService.create(inputData, needNotify)
     if needNotify then
         OfferModuleService.notifyPlayer(offer)
     end
+
+    return offer
 end
 
 --- Сообщает о новом предложении игроку в чат (ЛС)

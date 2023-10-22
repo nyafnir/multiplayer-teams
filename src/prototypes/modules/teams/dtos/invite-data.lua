@@ -1,0 +1,2 @@
+--- @class TeamInviteDataDto
+--- @field teamName string

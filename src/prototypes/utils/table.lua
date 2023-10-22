@@ -1,7 +1,8 @@
 TableUtils = {}
 
----@param table table | LuaCustomTable
----@return number
+--- Возвращает размер таблицы
+--- @param table table | LuaCustomTable
+--- @return number
 function TableUtils.getSize(table)
     if next(table) == nil then
         return 0
@@ -12,4 +13,15 @@ function TableUtils.getSize(table)
     end
 
     return table_size(table)
+end
+
+--- Проверяет тип значения
+--- @param value unknown
+--- @return boolean
+function TableUtils:isTable(value)
+    if type(value) == 'table' or type(value) == 'LuaCustomTables' then
+        return true
+    end
+
+    return false
 end

@@ -47,3 +47,16 @@ function ColorUtils.convertRGBToHex(color)
     return '#' .. math.floor(color.r * 255) .. math.floor(color.g * 255) ..
         math.floor(color.b * 255)
 end
+
+--- Конвертация цвета в тип Color.0.
+--- С альфа каналом.
+--- @param color Color
+--- @return Color.0
+function ColorUtils.convertColorToColor0(color)
+    if color.r ~= nil or color.g ~= nil or color.b ~= nil then
+        --- @type Color.0
+        return color
+    end
+
+    return { r = color[1], g = color[2], b = color[3], a = color[4] }
+end

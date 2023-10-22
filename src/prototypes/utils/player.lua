@@ -1,6 +1,7 @@
 PlayerUtils = {}
 
---- aka `getByNickname`
+--- aka `getByNickname`.
+--- Менее эффективен, чем получение по идентификатору.
 --- @param name string
 --- @return LuaPlayer | nil
 function PlayerUtils.getByName(name)
@@ -14,14 +15,14 @@ function PlayerUtils.getByName(name)
 end
 
 --- Возвращает сущность игрока по идентификатору.
---- Если не найден, то напишет ошибку.
+--- Если не найден, то выбросит локализованную ошибку.
 --- @param id number
 --- @return LuaPlayer
 function PlayerUtils.getById(id)
-    local player = game.players[id]
+    local player = game.get_player(id)
 
     if player == nil then
-        error({ ConfigService.getKey('utils:player.error-player-not-founded') })
+        error({ ConfigService.getKey('utils:player.error-player-not-found') })
     end
 
     return player

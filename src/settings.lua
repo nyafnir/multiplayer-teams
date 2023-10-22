@@ -6,4 +6,5 @@
 require('prototypes.services.config.index')
 
 --- Импорт настроек
+require('prototypes.modules.teams.settings')
 require('prototypes.services.logger.settings')

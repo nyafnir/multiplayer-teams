@@ -1,0 +1,6 @@
+--- @class TeamEntity
+--- @field id number Числовой идентификатор
+--- @field name string Строковый идентификатор (особенности фактории)
+--- @field title string | table Отображаемое название (только у команд по умолчанию используется локализованное (табличное) имя)
+--- @field color Color.0
+--- @field ownerId number | nil Владельца нет у команд по умолчанию
