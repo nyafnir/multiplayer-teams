@@ -1,5 +1,5 @@
 local function bootstrap()
-    ---Если какой-либо консольной команды нет, значит и других нет
+    --- Если какой-либо консольной команды нет, значит и других нет
     if commands.commands['offers'] ~= nil then return end
 
     commands.add_command('offers', { ConfigService.getKey('offers.list-help') },
@@ -10,20 +10,24 @@ local function bootstrap()
             if status == false then
                 return player.print(result, ColorUtils.colors.red)
             end
-            --- @cast result table<number,OfferEntity>
 
             player.print({ ConfigService.getKey('offers.list-header') }, player.color)
 
             if TableUtils.getSize(result) == 0 then
-                return player.print({ ConfigService.getKey('offers.list-empty') }, player.color)
+                return player.print({
+                        ConfigService.getKey('offers.list-empty') },
+                    player.color
+                )
             end
 
-            for _, offer in pairs(result) do
-                local timeoutMinutes = TimeUtils.convertTicksToMinutes(offer.expiredAtTicks - command.tick)
+            for id, offer in pairs(result) do
+                local timeoutMinutes = TimeUtils.convertTicksToMinutes(
+                    offer.expiredAtTicks - command.tick
+                )
                 player.print(
                     {
                         ConfigService.getKey('offers.list-element'),
-                        offer.id,
+                        id,
                         TimeUtils.minutesToClock(timeoutMinutes),
                         offer.localisedMessage
                     },
@@ -37,7 +41,12 @@ local function bootstrap()
             local player = PlayerUtils.getById(command.player_index)
             local offerId = command.parameter
 
-            local status, result = pcall(OfferModuleService.resolve, offerId, player.index, true)
+            local status, result = pcall(
+                OfferModuleService.resolve,
+                offerId,
+                player.index,
+                true
+            )
             if status == false then
                 return player.print(result, ColorUtils.colors.red)
             end
@@ -48,7 +57,12 @@ local function bootstrap()
             local player = PlayerUtils.getById(command.player_index)
             local offerId = command.parameter
 
-            local status, result = pcall(OfferModuleService.resolve, offerId, player.index, false)
+            local status, result = pcall(
+                OfferModuleService.resolve,
+                offerId,
+                player.index,
+                false
+            )
             if status == false then
                 return player.print(result, ColorUtils.colors.red)
             end

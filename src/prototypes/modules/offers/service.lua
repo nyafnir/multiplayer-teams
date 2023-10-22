@@ -18,7 +18,7 @@ function OfferModuleService.create(inputData, needNotify)
         expiredAtTicks = game.ticks_played + TimeUtils.convertMinutesToTicks(inputData.timeoutMinutes),
         data = inputData.data,
     }
-    table.insert(OfferModuleService.getAll(), offer)
+    table.insert(OfferModuleService.getAll(), offer.id, offer)
 
     if needNotify then
         OfferModuleService.notifyPlayer(offer)
@@ -56,15 +56,16 @@ function OfferModuleService.getAll()
     return global.offers
 end
 
---- Возвращает список предложений для игрока.
 --- @private
+--- Возвращает список предложений для игрока.
 --- @param playerId number
 function OfferModuleService.getAllByPlayer(playerId)
+    --- @type table<number,OfferEntity>
     local offers = {}
 
     for _, offer in pairs(OfferModuleService.getAll()) do
         if offer.playerId == playerId then
-            table.insert(offers, offer)
+            table.insert(offers, offer.id, offer)
         end
     end
 
@@ -75,22 +76,16 @@ end
 --- Возвращает предложение по идентификатору.
 --- @param id number | string
 function OfferModuleService.getById(id)
-    for _, offer in ipairs(OfferModuleService.getAll()) do
-        if offer.id == tonumber(id) then return offer end
-    end
-
-    return nil
+    return OfferModuleService.getAll()[id]
 end
 
 --- @private
 --- Удаляет предложение по идентификатору.
 --- @param id number | string
 function OfferModuleService.removeById(id)
-    for index, offer in ipairs(OfferModuleService.getAll()) do
-        if offer.id == tonumber(id) then
-            OfferModuleService.getAll()[index] = nil
-            return true
-        end
+    if OfferModuleService.getAll()[id] ~= nil then
+        OfferModuleService.getAll()[id] = nil
+        return true
     end
 
     return false
