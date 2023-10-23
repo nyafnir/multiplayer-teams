@@ -6,17 +6,18 @@ local function bootstrap()
         function(command)
             local requester = PlayerUtils.getById(command.player_index)
 
-            local status, result = pcall(TeamModuleService.create, command.parameter, requester.index, requester.color)
+            local status, result = pcall(TeamModuleService.create, command.parameter, requester.index)
             if status == false then
-                return requester.print(result, ColorUtils.colors.red)
+                return LoggerService.chat(result, ColorUtils.colors.red, requester)
             end
             local team = result
 
-            requester.print(
+            LoggerService.chat(
                 {
                     ConfigService.getKey('teams.create-backstory')
                 },
-                team.color
+                team.color,
+                requester
             )
         end)
 
@@ -26,53 +27,46 @@ local function bootstrap()
         local team
         -- Если запрос инфы по своей команде (вызов без параметров)
         if command.parameter == nil or command.parameter == '' then
-            team = TeamModuleService:getByName(requester.force.name)
+            team = TeamModuleService.getByName(requester.force.name)
         else
-            team = TeamModuleService:getByTitle(command.parameter)
-        end
-
-        if team == nil then
-            return requester.print(
-                {
-                    ConfigService.getKey('teams.error-team-not-found'),
-                    command.parameter
-                },
-                ColorUtils.colors.yellow
-            )
+            team = TeamModuleService.getByTitle(command.parameter)
         end
 
         local countPlayers = TableUtils.getSize(requester.force.players)
         --- @type table | string
-        local ownerName = { ConfigService.getKey('teams.common-no-owner') }
+        local ownerName = { ConfigService.getKey('teams.general-no-owner') }
         if team.ownerId ~= nil then
             ownerName = PlayerUtils.getById(team.ownerId).name
         end
 
-        requester.print(
+        LoggerService.chat(
             {
                 ConfigService.getKey('teams.info-result-header'),
                 team.name
             },
-            team.color
+            team.color,
+            requester
         )
-        requester.print(
+        LoggerService.chat(
             {
                 ConfigService.getKey('teams.info-result-element'),
                 team.id,
                 team.title,
                 ownerName,
-                countPlayers
+                countPlayers,
+                team.name
             },
-            team.color
+            team.color,
+            requester
         )
     end)
 
     commands.add_command('team-list', { ConfigService.getKey('teams.list-help') }, function(command)
         local requester = PlayerUtils.getById(command.player_index)
 
-        requester.print({ ConfigService.getKey('teams.list-result-header') }, ColorUtils.colors.white)
+        LoggerService.chat({ ConfigService.getKey('teams.list-result-header') }, ColorUtils.colors.white, requester)
 
-        for _, team in pairs(TeamModuleService:getAll()) do
+        for _, team in pairs(TeamModuleService.getAll()) do
             local force = game.forces[team.name]
 
             local countPlayers = TableUtils.getSize(force.players)
@@ -82,20 +76,22 @@ local function bootstrap()
             end
 
             --- @type table | string
-            local ownerName = { ConfigService.getKey('teams.common-no-owner') }
+            local ownerName = { ConfigService.getKey('teams.general-no-owner') }
             if team.ownerId ~= nil then
                 ownerName = PlayerUtils.getById(team.ownerId).name
             end
 
-            requester.print(
+            LoggerService.chat(
                 {
                     ConfigService.getKey('teams.list-result-element'),
                     team.id,
                     team.title,
                     ownerName,
-                    countPlayers
+                    countPlayers,
+                    team.name
                 },
-                team.color
+                team.color,
+                requester
             )
 
             ::continue::
@@ -109,38 +105,30 @@ local function bootstrap()
             local team
             -- Если запрос инфы по своей команде (вызов без параметров)
             if command.parameter == nil or command.parameter == '' then
-                team = TeamModuleService:getByName(requester.force.name)
+                team = TeamModuleService.getByName(requester.force.name)
             else
-                team = TeamModuleService:getByTitle(command.parameter)
-            end
-
-            if team == nil then
-                return requester.print(
-                    {
-                        ConfigService.getKey('teams.error-team-not-found'),
-                        command.parameter
-                    },
-                    ColorUtils.colors.yellow
-                )
+                team = TeamModuleService.getByTitle(command.parameter)
             end
 
             local force = game.forces[team.name]
 
-            requester.print(
+            LoggerService.chat(
                 {
                     ConfigService.getKey('teams.players-result-header'),
                     team.name
                 },
-                ColorUtils.colors.white
+                team.color,
+                requester
             )
             for _, member in pairs(force.players) do
-                requester.print(
+                LoggerService.chat(
                     {
                         ConfigService.getKey('teams.players-result-element'),
                         member.index,
                         member.name
                     },
-                    member.color
+                    member.color,
+                    requester
                 )
             end
         end)
@@ -149,9 +137,16 @@ local function bootstrap()
         function(command)
             local requester = PlayerUtils.getById(command.player_index)
 
-            local status, result = pcall(TeamModuleService.delete, requester.index)
+            local status, result
+            if command.parameter == nil then
+                status, result = pcall(TeamModuleService.delete, requester.index)
+            else
+                status, result = pcall(TeamModuleService.deleteByAdmin,
+                    command.parameter, requester.index)
+            end
+
             if status == false then
-                return requester.print(result, ColorUtils.colors.red)
+                return LoggerService.chat(result, ColorUtils.colors.red, requester)
             end
         end)
 
@@ -159,9 +154,10 @@ local function bootstrap()
         function(command)
             local requester = PlayerUtils.getById(command.player_index)
 
-            local status, result = pcall(TeamModuleService.editTitle, requester.index, command.parameter)
+            local status, result = pcall(TeamModuleService.editTitle, requester.index,
+                command.parameter)
             if status == false then
-                return requester.print(result, ColorUtils.colors.red)
+                return LoggerService.chat(result, ColorUtils.colors.red, requester)
             end
         end)
 
@@ -169,12 +165,11 @@ local function bootstrap()
         function(command)
             local requester = PlayerUtils.getById(command.player_index)
 
-            local status, result = pcall(TeamModuleService.editColor, requester.index, command.parameter)
+            local status, result = pcall(TeamModuleService.editColor, requester.index,
+                requester.color)
             if status == false then
-                return requester.print(result, ColorUtils.colors.red)
+                return LoggerService.chat(result, ColorUtils.colors.red, requester)
             end
-
-            requester.print({ ConfigService.getKey('teams.result'), result.color })
         end)
 
     commands.add_command('team-kick', { ConfigService.getKey('teams.kick-help') }, function(command)
@@ -182,16 +177,17 @@ local function bootstrap()
 
         local status, result = pcall(TeamModuleService.kick, requester.index, command.parameter)
         if status == false then
-            return requester.print(result, ColorUtils.colors.red)
+            return LoggerService.chat(result, ColorUtils.colors.red, requester)
         end
 
-        requester.print(
+        LoggerService.chat(
             {
                 ConfigService.getKey('teams.kick-result'),
                 result.player.name,
                 result.team.title
             },
-            result.team.color
+            result.team.color,
+            requester
         )
     end)
 
@@ -201,7 +197,7 @@ local function bootstrap()
 
             local status, result = pcall(TeamModuleService.leave, requester.index, command.parameter)
             if status == false then
-                return requester.print(result, ColorUtils.colors.red)
+                return LoggerService.chat(result, ColorUtils.colors.red, requester)
             end
         end)
 
@@ -211,27 +207,21 @@ local function bootstrap()
 
             local status, result = pcall(TeamModuleService.invite, requester.index, command.parameter)
             if status == false then
-                return requester.print(result, ColorUtils.colors.red)
+                return LoggerService.chat(result, ColorUtils.colors.red.requester)
             end
         end)
 
-    commands.add_command('team-admin-delete', { ConfigService.getKey('teams.admin-delete-help') },
+    commands.add_command('team-change-admin', { ConfigService.getKey('teams.admin-change-help') },
         function(command)
             local requester = PlayerUtils.getById(command.player_index)
 
-            local status, result = pcall(TeamModuleService.deleteByAdmin, requester.index, command.parameter)
-            if status == false then
-                return requester.print(result, ColorUtils.colors.red)
-            end
-        end)
+            --- Все до последнего слова - название команды
+            local _, _, teamTitleNew, playerNickname = string.find(command.parameter or '', "([%s%S]*) ([%S]*)$")
 
-    commands.add_command('team-admin-change', { ConfigService.getKey('teams.admin-change-help') },
-        function(command)
-            local requester = PlayerUtils.getById(command.player_index)
-
-            local status, result = pcall(TeamModuleService.changeTeamOfPlayerByAdmin, requester.index, command.parameter)
+            local status, result = pcall(TeamModuleService.changeTeamOfPlayerByAdmin, teamTitleNew or '',
+                playerNickname or '', requester.index)
             if status == false then
-                return requester.print(result, ColorUtils.colors.red)
+                return LoggerService.chat(result, ColorUtils.colors.red, requester)
             end
         end)
 end

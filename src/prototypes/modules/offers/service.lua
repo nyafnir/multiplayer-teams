@@ -31,8 +31,8 @@ end
 --- @param offer OfferEntity
 function OfferModuleService.notifyByCreate(offer)
     local player = PlayerUtils.getById(offer.playerId)
-    player.print(offer.localisedMessage)
-    player.print(
+    LoggerService.chat(offer.localisedMessage, nil, player)
+    LoggerService.chat(
         {
             ConfigService.getKey('offers.resolve-hint'),
             offer.id,
@@ -40,7 +40,8 @@ function OfferModuleService.notifyByCreate(offer)
                 TimeUtils.convertTicksToMinutes(offer.expiredAtTicks)
             )
         },
-        player.color
+        player.color,
+        player
     )
 end
 

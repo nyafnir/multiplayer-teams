@@ -18,7 +18,7 @@ end
 --- Проверяет тип значения
 --- @param value unknown
 --- @return boolean
-function TableUtils:isTable(value)
+function TableUtils.isTable(value)
     if type(value) == 'table' or type(value) == 'LuaCustomTables' then
         return true
     end

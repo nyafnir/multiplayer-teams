@@ -3,41 +3,58 @@ LoggerService = {}
 
 require('prototypes.utils.string')
 
---- Написать сообщение в общий игровой чат.
---- Если "game" нет, то ничего не отправит.
---- Возвращает то, что принял.
---- @generic T string | nil
---- @param message T
---- @return T
-function LoggerService.chat(message)
-    if game then
-        local title = ConfigService.getValue('logger:prefix:title', false)
-        local prefix = title == '' and title or '[' .. title .. ']' .. ' '
-        local color = ConfigService.getValue('logger:prefix:color', false)
+--- Написать сообщение цели (игрок, команда или не указать, то значит в глобальный чат).
+--- - Ничего не отправит, если entity не указан и глобальной `game` не существует).
+--- @param message string | table | nil
+--- @param entity nil | LuaPlayer | LuaForce | ForceIdentification Здесь ожидается объект
+--- @param color Color | nil
+function LoggerService.chat(message, color, entity)
+    local target = entity or game
 
-        --- @cast color Color
-        game.print(prefix .. message, color)
+    if target == nil or type(target) ~= 'table' then
+        return
     end
 
-    return message
+    local messageType = 'global'
+    if target.object_name == 'LuaPlayer' then
+        messageType = 'player'
+    else
+        if target.object_name == 'LuaForce' then
+            messageType = 'team'
+        end
+    end
+
+    local title = ConfigService.getValue('logger:prefix:title', false)
+    local prefix = title == '' and title or '[' .. title .. ']' .. ' '
+    local type = { '', '[',
+        { ConfigService.getKey('logger.message-type-') .. messageType },
+        ']' .. ' ' }
+    local _color = color or ConfigService.getValue('logger:prefix:color', false)
+
+    target.print(
+        { '',
+            prefix,
+            type,
+            message
+        },
+        _color
+    )
 end
 
 --- Написать сообщение всем игрокам у кого включен дебаг режим.
 --- Учитывает цвет выставленный в настройках каждого игрока.
 --- Возвращает то, что принял.
---- @generic T
---- @param data T
---- @return T
+--- @param data any
 function LoggerService.debug(data)
     for index, player in pairs(game.players) do
         if ConfigService.getValueFor('logger:debug:enabled', false, index) then
             local title = ConfigService.getValueFor('logger:debug:prefix:title', false, index)
             local prefix = title == '' and title or '[' .. title .. ']' .. ' '
-            local str = StringUtils.convertAnyToString(data)
+            local message = StringUtils.convertAnyToString(data)
             local color = ConfigService.getValueFor('logger:debug:prefix:color', false, index)
 
             --- @cast color Color
-            player.print(prefix .. str, color)
+            player.print({ '', prefix, message }, color)
         end
     end
 

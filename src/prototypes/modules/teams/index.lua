@@ -1,7 +1,7 @@
 require('prototypes.modules.teams.dtos.invite-data')
 require('prototypes.modules.teams.entities.team')
-require('prototypes.modules.teams.remotes')
 require('prototypes.modules.teams.service')
+require('prototypes.modules.teams.remotes')
 require('prototypes.modules.teams.commands')
 require('prototypes.modules.teams.constants')
 require('prototypes.modules.teams.events.resolve-invite')

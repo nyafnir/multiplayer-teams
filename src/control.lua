@@ -16,6 +16,7 @@ require('prototypes.modules.teams.index')
 
 --- [Событие] Происходит после создания карты с включенным модом
 script.on_init(function()
+    TeamModuleService.registerAll()
 end)
 
 --- [Событие] Происходит после загрузки и сохранения
@@ -24,7 +25,8 @@ script.on_load(function()
 end)
 
 --- Проверка работоспособности логгера, событие при присоединении игрока
-script.on_event(defines.events.on_player_joined_game, function(_)
-    LoggerService.chat('Hi!')
-    LoggerService.debug('Debug enabled')
+script.on_event(defines.events.on_player_joined_game, function(event)
+    local player = PlayerUtils.getById(event.player_index)
+    LoggerService.chat({ ConfigService.getKey('logger.enabled-note') }, nil, player)
+    LoggerService.debug('Сообщения отладки отображаются. Вы можете скрыть их в своих настройках игрока.')
 end)

@@ -8,15 +8,16 @@ local function bootstrap()
 
             local status, result = pcall(OfferModuleService.getAllByPlayer, player.index)
             if status == false then
-                return player.print(result, ColorUtils.colors.red)
+                return LoggerService.chat(result, ColorUtils.colors.red, player)
             end
 
-            player.print({ ConfigService.getKey('offers.list-header') }, player.color)
+            LoggerService.chat({ ConfigService.getKey('offers.list-header') }, player.color, player)
 
             if TableUtils.getSize(result) == 0 then
-                return player.print({
+                return LoggerService.chat({
                         ConfigService.getKey('offers.list-empty') },
-                    player.color
+                    player.color,
+                    player
                 )
             end
 
@@ -24,19 +25,20 @@ local function bootstrap()
                 local timeoutMinutes = TimeUtils.convertTicksToMinutes(
                     offer.expiredAtTicks - command.tick
                 )
-                player.print(
+                LoggerService.chat(
                     {
                         ConfigService.getKey('offers.list-element'),
                         id,
                         TimeUtils.minutesToClock(timeoutMinutes),
                         offer.localisedMessage
                     },
-                    player.color
+                    player.color, 
+                    player
                 )
             end
         end)
 
-    commands.add_command('yes', { ConfigService.getKey('offers.resolve-yes') },
+    commands.add_command('yes', { ConfigService.getKey('offers.resolve-yes-help') },
         function(command)
             local player = PlayerUtils.getById(command.player_index)
             local offerId = command.parameter
@@ -48,11 +50,11 @@ local function bootstrap()
                 true
             )
             if status == false then
-                return player.print(result, ColorUtils.colors.red)
+                return LoggerService.chat(result, ColorUtils.colors.red, player)
             end
         end)
 
-    commands.add_command('no', { ConfigService.getKey('offers.resolve-no') },
+    commands.add_command('no', { ConfigService.getKey('offers.resolve-no-help') },
         function(command)
             local player = PlayerUtils.getById(command.player_index)
             local offerId = command.parameter
@@ -64,7 +66,7 @@ local function bootstrap()
                 false
             )
             if status == false then
-                return player.print(result, ColorUtils.colors.red)
+                return LoggerService.chat(result, ColorUtils.colors.red, player)
             end
         end)
 end
