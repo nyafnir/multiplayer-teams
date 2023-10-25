@@ -14,17 +14,17 @@ script.on_event(TEAM_INVITE_RESOLVE_EVENT_NAME,
         local owner = PlayerUtils.getById(team.ownerId)
 
         if event.resolve then
+            LoggerService.chat({ 'mt.teams.invite.result.yes', player.name, team.title }, nil, owner.force)
+
             local status, result = pcall(TeamModuleService.changeTeamOfPlayerByAdmin, team.title, player.name, nil)
             if status == false then
-                LoggerService.chat(result, team.color, player)
-                LoggerService.chat(result, team.color, owner)
+                LoggerService.chat(result, nil, player)
+                LoggerService.chat(result, nil, owner)
                 return
             end
 
-            LoggerService.chat({ ConfigService.getKey('teams:invite-result-accept'), player.name, team.title },
-                team.color)
+            LoggerService.chat({ 'mt.teams.create.backstory' }, team.color, player)
         else
-            LoggerService.chat({ ConfigService.getKey('teams:invite-result-cancel'), player.name, team.title }, team
-            .color, owner.force)
+            LoggerService.chat({ 'mt.teams.invite.result.no', player.name, team.title }, nil, owner.force)
         end
     end)

@@ -11,7 +11,7 @@ data:extend({
         default_value = 'MultiplayerTeams',
         allow_blank = true,
         auto_trim = true,
-        localised_name = { prefixName .. ':' .. context .. '.' .. 'prefix:title-name' },
+        localised_name = { 'mt.logger.settings.prefix.title.name' },
     },
     {
         order = prefixOrder .. '-' .. context .. '-' .. 2,
@@ -20,7 +20,7 @@ data:extend({
         setting_type = 'runtime-global',
         -- orange
         default_value = { 255, 95, 21 },
-        localised_name = { prefixName .. ':' .. context .. '.' .. 'prefix:color-name' },
+        localised_name = { 'mt.logger.settings.prefix.color.name' },
     }
 })
 
@@ -31,7 +31,7 @@ data:extend({
         type = 'bool-setting',
         setting_type = 'runtime-per-user',
         default_value = true,
-        localised_name = { prefixName .. ':' .. context .. '.' .. 'debug:enabled-name' },
+        localised_name = { 'mt.logger.settings.debug.enabled.name' },
     },
     {
         order = prefixOrder .. '-' .. context .. '-d' .. 2,
@@ -41,7 +41,7 @@ data:extend({
         default_value = 'MultiplayerTeams',
         allow_blank = true,
         auto_trim = true,
-        localised_name = { prefixName .. ':' .. context .. '.' .. 'debug:prefix:title-name' },
+        localised_name = { 'mt.logger.settings.debug.prefix.title.name' },
     },
     {
         order = prefixOrder .. '-' .. context .. '-d' .. 3,
@@ -50,6 +50,6 @@ data:extend({
         setting_type = 'runtime-per-user',
         -- aqua light
         default_value = { 140, 255, 219 },
-        localised_name = { prefixName .. ':' .. context .. '.' .. 'debug:prefix:color-name' },
+        localised_name = { 'mt.logger.settings.debug.prefix.color.name' },
     }
 })

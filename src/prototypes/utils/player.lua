@@ -12,7 +12,7 @@ function PlayerUtils.getByName(name)
         end
     end
 
-    error({ ConfigService.getKey('general.error-target-player-not-found'), name })
+    error({ 'mt.errors.target-player-not-found', name })
 end
 
 --- Возвращает сущность игрока по идентификатору.
@@ -23,7 +23,7 @@ function PlayerUtils.getById(id)
     local player = game.get_player(id)
 
     if player == nil then
-        error({ ConfigService.getKey('general.error-target-player-not-found'), id })
+        error({ 'mt.errors.target-player-not-found', id })
     end
 
     return player

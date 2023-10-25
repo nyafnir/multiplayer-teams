@@ -27,6 +27,6 @@ end)
 --- Проверка работоспособности логгера, событие при присоединении игрока
 script.on_event(defines.events.on_player_joined_game, function(event)
     local player = PlayerUtils.getById(event.player_index)
-    LoggerService.chat({ ConfigService.getKey('logger.enabled-note') }, nil, player)
+    LoggerService.chat({ 'mt.logger.enabled.notification' }, nil, player)
     LoggerService.debug('Сообщения отладки отображаются. Вы можете скрыть их в своих настройках игрока.')
 end)

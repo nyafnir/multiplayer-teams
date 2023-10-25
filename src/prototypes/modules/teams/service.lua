@@ -14,22 +14,22 @@ function TeamModuleService.create(teamName, requesterId)
 
     --- Проверка, что есть место для создания команды
     if TableUtils.getSize(game.forces) >= 61 then -- 61 - из доки
-        error({ ConfigService.getKey('teams.create-error-reach-limit-forces') })
+        error({ 'mt.teams.create.errors.reach-limit-forces' })
     end
 
     if teamName == nil then
-        error({ ConfigService.getKey('teams.error-team-title-required') })
+        error({ 'mt.teams.errors.team-title-required' })
     end
 
     --- Проверка, что название команды не занято и имя для force свободно
     if TeamModuleService.isNameAndTitleFree(teamName) == false then
-        error({ ConfigService.getKey('teams.create-error-already-used'), teamName })
+        error({ 'mt.teams.create.errors.already-used', teamName })
     end
 
     --- Если игрок владел командой, то удаляем её
     if requester.force.name ~= DEFAULT_TEAM_NAME then
         --- Игнорируем выброс ошибки на случай если это не владелец команды
-        pcall(TeamModuleService.deleteByAdmin, TeamModuleService.getByName(requester.force.name).title, requester.index)
+        pcall(TeamModuleService.delete, requester.index)
     end
 
     local forceCreated = game.create_force(teamName)
@@ -49,7 +49,7 @@ function TeamModuleService.create(teamName, requesterId)
 
     LoggerService.chat(
         {
-            ConfigService.getKey('teams.create-result'),
+            'mt.teams.create.result',
             team.title,
             requester.name
         },
@@ -95,19 +95,19 @@ function TeamModuleService.registerAll()
 
         --- Если это команда по умолчанию, то используем предзаготовленные нами настройки
         if force.name == 'player' then
-            teams[force.name].title = { ConfigService.getKey('teams.general-player-title') }
+            teams[force.name].title = { 'mt.teams.forces.player.title' }
             teams[force.name].color = ColorUtils.colors.grey
             force.custom_color = teams[force.name].color
             force.disable_research()
             goto continue
         elseif force.name == 'enemy' then
-            teams[force.name].title = { ConfigService.getKey('teams.general-enemy-title') }
+            teams[force.name].title = { 'mt.teams.forces.enemy.title' }
             teams[force.name].color = ColorUtils.colors.red
             force.custom_color = teams[force.name].color
             -- Не отключаем исследования, чтобы кусаки могли развиваться (или это не влияет?)
             goto continue
         elseif force.name == 'neutral' then
-            teams[force.name].title = { ConfigService.getKey('teams.general-neutral-title') }
+            teams[force.name].title = { 'mt.teams.forces.neutral.title' }
             teams[force.name].color = ColorUtils.colors.white
             force.custom_color = teams[force.name].color
             force.disable_research()
@@ -133,7 +133,7 @@ function TeamModuleService.getByName(teamName)
     local team = TeamModuleService.getAll()[teamName]
 
     if team == nil then
-        error({ ConfigService.getKey('teams.error-team-not-found'), teamName })
+        error({ 'mt.teams.errors.team-not-found', teamName })
     end
 
     return team
@@ -156,7 +156,7 @@ function TeamModuleService.getByTitle(teamTitle)
         end
     end
 
-    error({ ConfigService.getKey('teams.error-team-not-found'), teamTitle })
+    error({ 'mt.teams.errors.team-not-found', teamTitle })
 end
 
 --- @private
@@ -183,25 +183,25 @@ function TeamModuleService.editTitle(requesterId, teamTitleNew)
     local team = TeamModuleService.getByName(requester.force.name)
 
     if team.ownerId ~= requester.index then
-        error({ ConfigService.getKey('teams.error-team-not-owner') })
+        error({ 'mt.teams.errors.team-not-owner' })
     end
 
     if teamTitleNew == nil then
-        error({ ConfigService.getKey('teams.title-error-new-title-required') })
+        error({ 'mt.teams.title.errors.new-title-required' })
     end
 
     if teamTitleNew == team.title then
-        error({ ConfigService.getKey('teams.title-error-equal-title') })
+        error({ 'mt.teams.title.errors.equal-title' })
     end
 
     --- Проверка, что название команды не занято
-    if TeamModuleService.isNameAndTitleFree(teamTitleNew) ~= nil then
-        error({ ConfigService.getKey('teams.title-error-title-already-used'), teamTitleNew })
+    if TeamModuleService.isNameAndTitleFree(teamTitleNew) == false then
+        error({ 'mt.teams.title.errors.title-already-used', teamTitleNew })
     end
 
     local teamTitleOld = team.title
     team.title = teamTitleNew
-    LoggerService.chat({ ConfigService.getKey('teams.title-result'), teamTitleOld, teamTitleNew }, team.color)
+    LoggerService.chat({ 'mt.teams.title.result', teamTitleOld, teamTitleNew }, team.color)
 
     return team
 end
@@ -219,19 +219,19 @@ function TeamModuleService.editColor(requesterId, colorNew)
 
     --- Проверка, что это владелец команды
     if team.ownerId ~= requester.index then
-        error({ ConfigService.getKey('teams.color.error-team-not-owner') })
+        error({ 'mt.teams.errors.team-not-owner' })
     end
 
     --- Проверка, что цвет не тот же самый
     if ColorUtils.isEqualRGBAColors(colorNew, team.color) then
-        error({ ConfigService.getKey('teams.color-error-equal-color') })
+        error({ 'mt.teams.color.errors.equal-color' })
     end
 
     team.color = colorNew
     requester.force.custom_color = team.color
 
-    LoggerService.chat({ ConfigService.getKey('teams.color-result') }, colorNew, requester.force)
-    LoggerService.chat({ ConfigService.getKey('teams.color-general-info') }, nil, requester.force)
+    LoggerService.chat({ 'mt.teams.color.result', team.title }, nil, requester.force)
+    LoggerService.chat({ 'mt.teams.color.build-info' }, nil, requester.force)
 
     return team
 end
@@ -245,22 +245,32 @@ function TeamModuleService.kick(requesterId, playerName)
     local team = TeamModuleService.getByName(requester.force.name)
 
     if team.ownerId ~= requester.index then
-        error({ ConfigService.getKey('teams.error-team-not-owner') })
+        error({ 'mt.teams.errors.team-not-owner' })
     end
 
     if playerName == nil then
-        error({ ConfigService.getKey('general.error-target-player-name-required') })
+        error({ 'mt.errors.target-player-name-required' })
     end
 
     local player = PlayerUtils.getByName(playerName)
 
     if player.index == requester.index then
-        error({ ConfigService.getKey('teams.kick-error-cant-kick-TeamModuleService') })
+        error({ 'mt.teams.kick.errors.cant-kick-self' })
     end
 
     if requester.force.index ~= player.force.index then
-        error({ ConfigService.getKey('teams.error-target-player-not-in-team') })
+        error({ 'mt.teams.errors.target-player-not-in-team' })
     end
+
+    LoggerService.chat(
+        {
+            'mt.teams.kick.result',
+            player.name,
+            team.title
+        },
+        nil,
+        requester.force
+    )
 
     player.force = DEFAULT_TEAM_NAME
 
@@ -275,21 +285,21 @@ function TeamModuleService.leave(requesterId)
     local team = TeamModuleService.getByName(requester.force.name)
 
     if team.name == DEFAULT_TEAM_NAME then
-        error({ ConfigService.getKey('teams.leave-error-cant-leave-default') })
+        error({ 'mt.teams.leave.errors.cant-leave-default' })
     end
 
     if requester.index == team.ownerId then
-        error({ ConfigService.getKey('teams.leave-error-owner-cant-leave') })
+        error({ 'mt.teams.leave.errors.owner-cant-leave' })
     end
 
     LoggerService.chat(
         {
-            ConfigService.getKey('teams.leave-result'),
+            'mt.teams.leave.result',
             requester.name,
             team.title
         },
         nil,
-        requester
+        requester.force
     )
 
     requester.force = DEFAULT_TEAM_NAME
@@ -305,39 +315,39 @@ function TeamModuleService.invite(requesterId, playerNickname)
     local team = TeamModuleService.getByName(requester.force.name)
 
     if team.ownerId ~= requester.index then
-        error({ ConfigService.getKey('teams.error-team-not-owner') })
+        error({ 'mt.teams.errors.team-not-owner' })
     end
 
     if playerNickname == nil then
-        error({ ConfigService.getKey('general.error-target-player-name-required') })
+        error({ 'mt.errors.target-player-name-required' })
     end
 
     local player = PlayerUtils.getByName(playerNickname)
 
     if team.id == player.force.index then
-        error({ ConfigService.getKey('teams.invite-error-player-already-in-team'), player.name, team.title })
+        error({ 'mt.teams.invite.errors.player-already-in-team', player.name, team.title })
     end
 
-    -- @type number
-    local timeoutMinutes = ConfigService.getValue('teams.invite-timeout')
+    --- @type number
+    local timeoutMinutes = ConfigService.getValue('teams:invite:timeout')
     local offer = OfferModuleService.create({
         eventId = TEAM_INVITE_RESOLVE_EVENT_NAME,
         playerId = player.index,
-        localisedMessage = { ConfigService.getKey('teams.invite-result-offer'), team.title },
+        localisedMessage = { 'mt.teams.invite.result.incoming', team.title, requester.name },
         timeoutMinutes = timeoutMinutes,
         data = {
             teamName = team.name
         }
-    })
+    }, true)
 
     LoggerService.chat(
         {
-            ConfigService.getKey('teams.invite-result-sender'),
+            'mt.teams.invite.result.outcoming',
             player.name,
             team.title,
             TimeUtils.minutesToClock(timeoutMinutes)
         },
-        team.color,
+        nil,
         requester.force
     )
 
@@ -353,17 +363,11 @@ function TeamModuleService.delete(requesterId)
 
     --- Проверка, что это владелец команды
     if team.ownerId ~= requester.index then
-        error({ ConfigService.getKey('teams.error-team-not-owner') })
+        error({ 'mt.teams.errors.team-not-owner' })
     end
-
-    local teamTitle = team.title
-    local teamColor = team.color
 
     --- Сливаем `force` в команду по умолчанию (так работает удаление в факторио)
     game.merge_forces(team.name, DEFAULT_TEAM_NAME)
-    TeamModuleService.getAll()[team.name] = nil
-
-    LoggerService.chat({ ConfigService.getKey('teams.delete-result'), teamTitle }, teamColor)
 end
 
 --- @public
@@ -372,31 +376,30 @@ end
 --- @param requesterId? number | nil
 function TeamModuleService.deleteByAdmin(teamTitle, requesterId)
     if requesterId and PlayerUtils.getById(requesterId).admin == false then
-        error({ ConfigService.getKey('general.error-not-admin') })
+        error({ 'mt.errors.not-admin' })
     end
 
     local team = TeamModuleService.getByTitle(teamTitle)
     if team.name == 'player' or team.name == 'enemy' or team.name == 'neutral' then
-        error({ ConfigService.getKey('teams.delete-error-cant-delete-default'), team.name, team.title })
+        error({ 'mt.teams.delete.errors.cant-delete-default', team.name, team.title })
     end
 
-    ---Сливаем `force` в команду по умолчанию
+    --- Сливаем `force` в команду по умолчанию (так работает удаление в факторио)
     game.merge_forces(team.name, DEFAULT_TEAM_NAME)
-    TeamModuleService.getAll()[team.name] = nil
 
-    LoggerService.chat({ ConfigService.getKey('teams.delete-result-by-admin'), team.title }, team.color)
+    LoggerService.chat({ 'mt.teams.delete.result-by-admin', team.title }, team.color)
 end
 
 --- @public
 --- Меняет игроку команду (принудительно) от админа (если указан идентификатор).
---- Если игрока имеет свою команду, то она будет распущена.
+--- Если игрок имеет свою команду, то она будет распущена.
 --- @param teamTitleNew string
 --- @param playerNickname string
 --- @param requesterId? number | nil
---- @return { teamOld: TeamEntity, teamNew: TeamEntity }
+--- @return { player: LuaPlayer, teamOld: TeamEntity, teamNew: TeamEntity }
 function TeamModuleService.changeTeamOfPlayerByAdmin(teamTitleNew, playerNickname, requesterId)
     if requesterId and PlayerUtils.getById(requesterId).admin == false then
-        error({ ConfigService.getKey('general.error-not-admin') })
+        error({ 'mt.errors.not-admin' })
     end
 
     local teamNew = TeamModuleService.getByTitle(teamTitleNew)
@@ -405,7 +408,7 @@ function TeamModuleService.changeTeamOfPlayerByAdmin(teamTitleNew, playerNicknam
 
     --- Проверка, что игрок ещё не состоит в целевой команде
     if teamNew.id == player.force.index then
-        error({ ConfigService.getKey('teams.admin-change-error-target-player-already-in-team'), player.name,
+        error({ 'mt.teams.admin.change.errors.target-player-already-in-team', player.name,
             teamNew.title })
     end
 
@@ -420,7 +423,5 @@ function TeamModuleService.changeTeamOfPlayerByAdmin(teamTitleNew, playerNicknam
 
     player.force = teamNew.name
 
-    LoggerService.chat({ ConfigService.getKey('teams.admin-change-result'), player.name, teamNew.title })
-
-    return { teamOld = teamOld, teamNew = teamNew }
+    return { player = player, teamOld = teamOld, teamNew = teamNew }
 end

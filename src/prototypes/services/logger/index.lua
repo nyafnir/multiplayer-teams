@@ -15,21 +15,23 @@ function LoggerService.chat(message, color, entity)
         return
     end
 
-    local messageType = 'global'
+    local messageType = { 'mt.logger.message-type.global' }
     if target.object_name == 'LuaPlayer' then
-        messageType = 'player'
+        messageType = { 'mt.logger.message-type.player' }
+        color = color or ColorUtils.colors.pink
     else
         if target.object_name == 'LuaForce' then
-            messageType = 'team'
+            messageType = { 'mt.logger.message-type.force' }
+            color = color or target.color
         end
     end
 
     local title = ConfigService.getValue('logger:prefix:title', false)
     local prefix = title == '' and title or '[' .. title .. ']' .. ' '
     local type = { '', '[',
-        { ConfigService.getKey('logger.message-type-') .. messageType },
+        messageType,
         ']' .. ' ' }
-    local _color = color or ConfigService.getValue('logger:prefix:color', false)
+    color = color or ConfigService.getValue('logger:prefix:color', false)
 
     target.print(
         { '',
@@ -37,7 +39,7 @@ function LoggerService.chat(message, color, entity)
             type,
             message
         },
-        _color
+        color
     )
 end
 

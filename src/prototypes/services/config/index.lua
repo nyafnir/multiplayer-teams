@@ -1,23 +1,18 @@
 --- Сервис получения любых настроек
 ConfigService = {}
 
+--- @public
 ConfigService.prefixes = {
-    --- Используется в настройках, локализации и именовании сущностей.
+    --- Используется в настройках и именовании сущностей.
     --- Важно: это название хардкодом вбито в файлы локализации, поэтому
-    --- при изменении тут надо и менять и там. Так же это название
-    --- может быть вбито в DEV-NOTES (примеры).
+    --- при изменении тут надо менять везде. Так же это название
+    --- вбито в DEV-NOTES.
     default = 'mt',
     --- Используется в путях к файлам мода
     filePath = '__MultiplayerTeams__'
 }
 
---- Объединяет префикс с указанным именем
---- @param name string
---- @return string
-function ConfigService.getKey(name)
-    return ConfigService.prefixes.default .. ':' .. name
-end
-
+--- @public
 --- Возвращает значение по ключу (ищет в `startup` и `global`).
 --- Ожидаемый тип можно задать значением по умолчанию.
 --- @param name string Имя без префикса
@@ -42,6 +37,7 @@ function ConfigService.getValue(name, isKey, defaultValue)
     return defaultValue
 end
 
+--- @public
 --- Получение значения настройки `name` у игрока
 --- @param name string
 --- @param isKey? boolean Если префикс уже есть (по умолчанию: false)
@@ -56,4 +52,12 @@ function ConfigService.getValueFor(name, isKey, playerIndex)
     end
 
     return nil
+end
+
+--- @private
+--- Объединяет префикс с указанным именем (через двоеточие)
+--- @param name string
+--- @return string
+function ConfigService.getKey(name)
+    return ConfigService.prefixes.default .. ':' .. name
 end
