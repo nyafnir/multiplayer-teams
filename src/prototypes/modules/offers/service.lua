@@ -12,7 +12,7 @@ function OfferModuleService.create(inputData, needNotify)
     needNotify = needNotify and true or false
 
     local offer = {
-        id = math.random(9999999),
+        id = math.random(999999),
         eventId = inputData.eventId,
         playerId = inputData.playerId,
         localisedMessage = inputData.localisedMessage,
