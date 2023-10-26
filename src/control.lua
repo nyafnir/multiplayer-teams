@@ -13,6 +13,7 @@ require('prototypes.utils.time')
 
 require('prototypes.modules.offers.index')
 require('prototypes.modules.teams.index')
+require('prototypes.modules.relations.index')
 
 --- [Событие] Происходит после создания карты с включенным модом
 script.on_init(function()

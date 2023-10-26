@@ -1,0 +1,4 @@
+--- @class RelationRequestDataDto
+--- @field teamSourceName string
+--- @field teamDestinationName string
+--- @field type 'neutral' | 'friend'
