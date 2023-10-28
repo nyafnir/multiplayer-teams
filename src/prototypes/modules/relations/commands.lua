@@ -11,7 +11,7 @@ local function bootstrap()
             local result = { friends = '', neutrals = '', enemies = '' }
 
             for key, value in pairs(list) do
-                for team in pairs(value) do
+                for _, team in pairs(value) do
                     table.insert(titles[key], team.title)
                 end
 
@@ -59,7 +59,6 @@ local function bootstrap()
             end
         end)
 
-
     commands.add_command('relation-friend', { 'mt.relations.set.friend.help' },
         function(command)
             local requester = PlayerUtils.getById(command.player_index)
@@ -69,6 +68,19 @@ local function bootstrap()
                 RelationModuleService.setRelation,
                 teamDestinationTitle,
                 'friend',
+                requester.index
+            )
+            if status == false then
+                return LoggerService.chat(result, ColorUtils.colors.red, requester)
+            end
+        end)
+
+    commands.add_command('friendly-fire', { 'mt.relations.friendly-fire.help' },
+        function(command)
+            local requester = PlayerUtils.getById(command.player_index)
+
+            local status, result = pcall(
+                RelationModuleService.switchFriendlyFire,
                 requester.index
             )
             if status == false then
