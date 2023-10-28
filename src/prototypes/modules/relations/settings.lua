@@ -12,6 +12,6 @@ data:extend({
         minimum_value = 1,
         maximum_value = 1440, --- сутки
         localised_name = { 'mt.relations.settings.request.timeout.name' },
-        localised_description = { 'mt.teams.settings.request.timeout.description' },
+        localised_description = { 'mt.relations.settings.request.timeout.description' },
     }
 })
