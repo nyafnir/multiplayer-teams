@@ -3,14 +3,15 @@ script.on_event(TEAM_INVITE_RESOLVE_EVENT_NAME,
     function(event)
         --- @type TeamInviteDataDto
         local data = event.data
-        local team = TeamModuleService.getByName(data.teamName)
-
-        --- Проверяем, что команда ещё существует
-        if team == nil then
-            return
-        end
 
         local player = PlayerUtils.getById(event.playerId)
+
+        local status, result = pcall(TeamModuleService.getByName, data.teamName)
+        if status == false then
+            return LoggerService.chat(result, ColorUtils.colors.red, player)
+        end
+        local team = result
+
         local owner = PlayerUtils.getById(team.ownerId)
 
         if event.resolve then
