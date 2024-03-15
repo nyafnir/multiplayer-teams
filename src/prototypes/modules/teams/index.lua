@@ -4,7 +4,6 @@ require('prototypes.modules.teams.service')
 require('prototypes.modules.teams.remotes')
 require('prototypes.modules.teams.commands')
 require('prototypes.modules.teams.constants')
-require('prototypes.modules.teams.events.force-delete')
 require('prototypes.modules.teams.events.resolve-invite')
 
 --- Модуль команд.

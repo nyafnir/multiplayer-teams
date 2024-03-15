@@ -3,7 +3,6 @@ require('prototypes.modules.relations.service')
 require('prototypes.modules.relations.commands')
 require('prototypes.modules.relations.constants')
 require('prototypes.modules.relations.events.resolve-request')
-require('prototypes.modules.relations.events.force-created')
 
 --- Модуль отношений между командами.
 --- Позволяет игрокам управлять отношениями между своими командами, а то по умолчанию все враги.

@@ -1,2 +1,7 @@
+--- Зависимости импортов
+
+require('prototypes.utils.color')
+
 --- Импорты используемые в стилях
---- Порядок зависит от использования одного модуля другим
+
+require('prototypes.services.gui.styles.index')
